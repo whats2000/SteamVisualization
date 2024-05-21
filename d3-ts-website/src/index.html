@@ -11,6 +11,9 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
+        background-color: #1b2838;
+        color: #c7d5e0;
+        font-family: 'Arial', sans-serif;
       }
       #loading-container {
         position: fixed;
@@ -20,6 +23,7 @@
         text-align: center;
         width: 80%;
         max-width: 300px;
+        color: #c7d5e0;
       }
       #spinner {
         width: 3rem;
@@ -27,20 +31,31 @@
         margin-bottom: 1rem;
         margin-left: auto;
         margin-right: auto;
+        border: 0.3rem solid #c7d5e0;
+        border-top: 0.3rem solid #5c7e10;
+      }
+      .progress {
+        background-color: #2a475e;
+      }
+      .progress-bar {
+        background-color: #5c7e10;
       }
       #visualization-container {
-        display: none;
         opacity: 0;
-        transition: opacity 1s;
+        transition: opacity 1s ease-in-out;
         text-align: center;
         margin: 0 auto;
+        width: 100%;
       }
-      #visualization-container.fade-in {
-        display: block;
+      #visualization-container.visible {
         opacity: 1;
       }
       svg {
         margin: 0 auto;
+        display: block;
+        background-color: #16202d;
+        border: 1px solid #5c7e10;
+        border-radius: 5px;
       }
     </style>
 </head>

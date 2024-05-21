@@ -2,7 +2,7 @@ import * as d3 from 'd3';
 import { GameData, GameDataDictionary } from './types';
 
 let loadedChunks = 0;
-const totalChunks = 9; // Adjust this based on the number of chunks generated
+const totalChunks = 9;
 
 const updateProgressBar = (percentage: number) => {
   const progressBar = document.getElementById('progress-bar') as HTMLElement;
@@ -27,7 +27,7 @@ const hideProgressBar = () => {
 
 const showVisualization = () => {
   const visualizationContainer = document.getElementById('visualization-container') as HTMLElement;
-  visualizationContainer.classList.add('fade-in');
+  visualizationContainer.classList.add('visible');
 };
 
 const loadChunk = async (chunkNumber: number): Promise<GameDataDictionary> => {
@@ -89,11 +89,15 @@ const init = async () => {
     // Add X axis
     svg.append('g')
       .attr('transform', `translate(0,${height})`)
-      .call(d3.axisBottom(x).ticks(10, d3.format('~g')));
+      .call(d3.axisBottom(x).ticks(10, d3.format('~g')))
+      .selectAll('text')
+      .style('fill', 'white');
 
     // Add Y axis
     svg.append('g')
-      .call(d3.axisLeft(y).ticks(10, d3.format('~g')));
+      .call(d3.axisLeft(y).ticks(10, d3.format('~g')))
+      .selectAll('text')
+      .style('fill', 'white');
 
     // Add dots
     svg.append('g')
@@ -110,15 +114,17 @@ const init = async () => {
     svg.append('text')
       .attr('text-anchor', 'end')
       .attr('x', width)
-      .attr('y', height + margin.top + 20)
-      .text('Price (Log Scale)');
+      .attr('y', height + margin.top - 30)
+      .text('Price (Log Scale)')
+      .style('fill', 'white');
 
     svg.append('text')
       .attr('text-anchor', 'end')
       .attr('transform', 'rotate(-90)')
-      .attr('y', -margin.left + 20)
+      .attr('y', -margin.left + 70)
       .attr('x', -margin.top)
-      .text('Peak CCU (Log Scale)');
+      .text('Peak CCU (Log Scale)')
+      .style('fill', 'white');
   } catch (error) {
     console.error('Error loading data:', error);
   } finally {
