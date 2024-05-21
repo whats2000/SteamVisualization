@@ -40,7 +40,7 @@ jobs:
           path: './d3-ts-website/dist'
 
       - name: Deploy to GitHub Pages
-        id: deployment
+        id: github-pages
         uses: actions/deploy-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
