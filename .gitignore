@@ -27,3 +27,4 @@ games.json
 
 .vite-react-ssg-temp/
 cache-images
+d3-ts-website/src/data/*.json
