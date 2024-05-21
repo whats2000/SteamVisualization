@@ -57,7 +57,6 @@ const init = async () => {
 
   try {
     const data = await loadAllData();
-    console.log(data);
 
     // Filter data to remove invalid entries
     const filteredData = data.filter(d => d.price > 0 && d.peak_ccu > 0);
@@ -99,16 +98,42 @@ const init = async () => {
       .selectAll('text')
       .style('fill', 'white');
 
-    // Add dots
+    // Tooltip
+    const tooltip = d3.select('body').append('div')
+      .attr('class', 'tooltip')
+      .style('opacity', 0)
+      .style('position', 'absolute')
+      .style('background-color', 'white')
+      .style('padding', '5px')
+      .style('border-radius', '5px')
+      .style('box-shadow', '0 0 10px rgba(0,0,0,0.5)');
+
+    // Add dots with interactivity
     svg.append('g')
-      .selectAll('dot')
+      .selectAll('circle')
       .data(filteredData)
       .enter()
       .append('circle')
       .attr('cx', d => x(d.price))
       .attr('cy', d => y(d.peak_ccu))
       .attr('r', 2.5)
-      .style('fill', '#69b3a2');
+      .style('fill', '#69b3a2')
+      .style('opacity', 0.5)
+      .on('mouseover', function(event, d) {
+        d3.select(this).attr('r', 5).style('fill', '#ffcc00');
+        tooltip.transition().duration(200).style('opacity', .9);
+        tooltip.html(`Name: ${d.name}<br/>Price: ${d.price}<br/>Peak CCU: ${d.peak_ccu}`)
+          .style('left', (event.pageX + 10) + 'px')
+          .style('top', (event.pageY - 28) + 'px');
+      })
+      .on('mouseout', function(_d) {
+        d3.select(this).attr('r', 2.5).style('fill', '#69b3a2');
+        tooltip.transition().duration(500).style('opacity', 0);
+      })
+      .on('click', function(_event, _d) {
+        d3.selectAll('circle').style('stroke', 'none');
+        d3.select(this).style('stroke', 'red').style('stroke-width', 2);
+      });
 
     // Add labels
     svg.append('text')
