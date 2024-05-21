@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+
 import { GameData, GameDataDictionary } from './types';
 
 const loadChunk = async (chunkNumber: number): Promise<GameDataDictionary> => {
