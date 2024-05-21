@@ -18,14 +18,21 @@ jobs:
         with:
           node-version: '16'
 
+      - name: Navigate to subfolder
+        run: cd d3-ts-website
+
       - name: Install dependencies
-        run: yarn install
+        run: |
+          cd d3-ts-website
+          yarn install
 
       - name: Build project
-        run: yarn build
+        run: |
+          cd d3-ts-website
+          yarn build
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          publish_dir: ./d3-ts-website/dist
