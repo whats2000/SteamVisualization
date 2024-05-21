@@ -22,21 +22,22 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Navigate to subfolder
-        run: cd d3-ts-website
-
       - name: Install dependencies
-        run: |
-          cd d3-ts-website
-          yarn install
+        run: yarn install
+        working-directory: d3-ts-website
 
       - name: Build project
-        run: |
-          cd d3-ts-website
-          yarn build
+        run: yarn build
+        working-directory: d3-ts-website
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './d3-ts-website/dist'
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./d3-ts-website/dist
+        id: deployment
+        uses: actions/deploy-pages@v4
