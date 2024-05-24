@@ -1,30 +1,33 @@
-import { SteamDataFromJson } from "./Modals/steamDataFromJson";
-import { SteamDataFromDatabase } from "./Modals/steamDataFromDatabase";
-import { SpinnerProgress } from "./Modals/spinnerProgress";
+import { SteamDataFromJson } from "./modals/steamDataFromJson";
+import { SteamDataFromDatabase } from "./modals/steamDataFromDatabase";
+import { SpinnerProgress } from "./modals/spinnerProgress";
 import { createScatterPlot } from "./plot/scatterPlot";
 import { timelinePlot } from "./plot/timelinePlot";
 
 const checkDatabaseConnection = async (): Promise<boolean> => {
-  try {
-    const response = await fetch('http://localhost:5000/api/check_database');
-    if (!response.ok) {
+  return fetch('http://localhost:5000/api/check_database')
+    .then(response => {
+      if (!response.ok) {
+        console.log('No available database connection');
+        return false;
+      }
+
+      // The response is a JSON object {'status': 'online'}
+      return response.json();
+    }).then(data => {
+      if (data && data.status === 'online') {
+        console.log('Database connection is online');
+        return true;
+      }
+
       console.log('No available database connection');
       return false;
-    }
-    const result = await response.json();
-
-    if (result.status === 'online') {
-      console.log('Database connection is online');
-      return true;
-    } else {
-      console.log('Database connection is offline');
+    })
+    .catch(error => {
+      console.log('Failed to check database connection:');
       return false;
-    }
-  } catch (error) {
-    console.error('Failed to check database connection:', error);
-    return false;
-  }
-};
+    });
+}
 
 const init = async () => {
   SpinnerProgress.showSpinner();

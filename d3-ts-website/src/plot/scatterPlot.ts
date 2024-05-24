@@ -1,9 +1,9 @@
 import * as d3 from 'd3';
-import {GameData} from "../types";
+import { ScatterPlotData } from "../types";
 
-export const createScatterPlot = (data: GameData[]) => {
+export const createScatterPlot = (data: ScatterPlotData[]) => {
     // Filter data to remove invalid entries
-    const filteredData = data.filter(d => d.price > 0 && d.peak_ccu > 0);
+    const filteredData = data.filter(d => d.price as number > 0 && d.peak_ccu as number > 0);
 
     // Set dimensions and margins for the plot
     const margin = {top: 20, right: 30, bottom: 40, left: 50};
@@ -58,8 +58,8 @@ export const createScatterPlot = (data: GameData[]) => {
         .data(filteredData)
         .enter()
         .append('circle')
-        .attr('cx', d => x(d.price))
-        .attr('cy', d => y(d.peak_ccu))
+        .attr('cx', d => x(d.price as number))
+        .attr('cy', d => y(d.peak_ccu as number))
         .attr('r', 2.5)
         .style('fill', '#69b3a2')
         .style('opacity', 0.5)

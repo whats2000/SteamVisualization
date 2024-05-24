@@ -1,5 +1,5 @@
-import { GameData } from "../types";
+import { TimelinePlotData } from "../types";
 
-export const timelinePlot = (data: GameData[]) => {
+export const timelinePlot = (data: TimelinePlotData[]) => {
   // TODO: Implement timeline plot
 }
