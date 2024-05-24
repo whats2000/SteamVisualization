@@ -71,6 +71,7 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
   // Add brush
   const brush = d3.brush()
     .extent([[-30, -30], [width + 30, height + 30]])
+    .on('brush', updateChart)
     .on('end', updateChart);
 
   svg.append('g')
@@ -171,5 +172,33 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
       .call(d3.axisLeft(yZoom).ticks(10, d3.format('~g')))
       .selectAll('text')
       .style('fill', 'white');
+
+    // Add zoom behavior
+    const zoom = d3.zoom<SVGSVGElement, unknown>()
+      .scaleExtent([1, 10])
+      .translateExtent([[-width, -height], [2 * width, 2 * height]])
+      .extent([[0, 0], [width, height]])
+      .on('zoom', zoomed);
+
+    zoomSvg.call(zoom as any);
+
+    function zoomed(event: { transform: d3.ZoomTransform }) {
+      const newX = event.transform.rescaleX(xZoom);
+      const newY = event.transform.rescaleY(yZoom);
+
+      zoomSvg.selectAll('circle')
+        // @ts-expect-error
+        .attr('cx', d => newX(d.price as number))
+        // @ts-expect-error
+        .attr('cy', d => newY(d.peak_ccu as number));
+
+      zoomSvg.select('.x-axis').call(d3.axisBottom(newX).ticks(10, d3.format('~g')) as any)
+        .selectAll('text')
+        .style('fill', 'white');
+
+      zoomSvg.select('.y-axis').call(d3.axisLeft(newY).ticks(10, d3.format('~g')) as any)
+        .selectAll('text')
+        .style('fill', 'white');
+    }
   }
 };
