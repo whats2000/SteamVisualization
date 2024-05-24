@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Text, Date, Float, Boolean, Fore
 
 from . import db
 
+
 class Game(db.Model):
     __tablename__ = 'games'
     game_id = Column(Integer, primary_key=True)

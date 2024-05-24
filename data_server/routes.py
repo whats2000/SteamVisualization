@@ -5,6 +5,7 @@ from .modals import Game
 
 bp = Blueprint('main', __name__)
 
+
 @bp.route('/api/check_database', methods=['GET'])
 def check_database():
     try:
@@ -12,6 +13,7 @@ def check_database():
         return jsonify({'status': 'online'})
     except OperationalError:
         return jsonify({'status': 'offline'})
+
 
 @bp.route('/api/games_price_peak_ccu', methods=['GET'])
 def get_games():
@@ -30,6 +32,7 @@ def get_games():
         })
     return jsonify(games_list)
 
+
 @bp.route('/api/game_timeline', methods=['GET'])
 def get_game_timeline():
     games = Game.query.all()
@@ -46,6 +49,7 @@ def get_game_timeline():
         })
 
     return jsonify(games_list)
+
 
 # Register blueprint
 def register_blueprints(app):
