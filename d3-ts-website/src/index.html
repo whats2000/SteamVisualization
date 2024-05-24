@@ -40,14 +40,14 @@
       .progress-bar {
         background-color: #5c7e10;
       }
-      #visualization-container, #visualization-container-2 {
+      #visualization-container, #visualization-container-2, #visualization-year-filter {
         opacity: 0;
         transition: opacity 1s ease-in-out;
         text-align: center;
         margin: 0 auto;
         width: 100%;
       }
-      #visualization-container.visible, #visualization-container-2.visible {
+      #visualization-container.visible, #visualization-container-2.visible, #visualization-year-filter.visible {
         opacity: 1;
       }
       svg {
@@ -91,6 +91,7 @@
     </div>
 </div>
 <main class="container">
+    <div id="visualization-year-filter"></div>
     <div id="visualization-container"></div>
     <div id="visualization-container-2"></div>
     <div id="details-container"></div>

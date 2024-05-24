@@ -1,9 +1,14 @@
 import * as d3 from 'd3';
 import { ScatterPlotData } from '../types';
+import { createYearHistogram } from './scatterPlot/yearHistogram';
 
 export const createScatterPlot = (data: ScatterPlotData[]) => {
-  // Filter data to remove invalid entries
-  const filteredData = data.filter(d => d.peak_ccu > 0);
+  // Set up the year filter
+  const years = data.map(d => new Date(d.release_date).getFullYear());
+  const minYear = d3.min(years) as number;
+  const maxYear = d3.max(years) as number;
+
+  let filteredData = data.filter(d => d.peak_ccu > 0);
 
   // Set dimensions and margins for the plot
   const margin = { top: 20, right: 30, bottom: 40, left: 50 };
@@ -201,4 +206,26 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
         .style('fill', 'white');
     }
   }
+
+  // Add histogram for game release years
+  createYearHistogram(data, minYear, maxYear, updateYearFilter);
+
+  function updateYearFilter([newMinYear, newMaxYear]: [number, number]) {
+    filteredData = data.filter(d => {
+      const year = new Date(d.release_date).getFullYear();
+      return d.peak_ccu > 0 && year >= newMinYear && year <= newMaxYear;
+    });
+
+    svg.selectAll('circle').remove();
+    svg.selectAll('circle')
+      .data(filteredData)
+      .enter()
+      .append('circle')
+      .attr('cx', d => x(d.price as number))
+      .attr('cy', d => y(d.peak_ccu as number))
+      .attr('r', 2.5)
+      .style('fill', d => colorScale(d.estimated_owners))
+      .style('opacity', 0.5);
+  }
 };
+

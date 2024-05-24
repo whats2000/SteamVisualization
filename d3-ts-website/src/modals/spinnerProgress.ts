@@ -21,6 +21,9 @@ export class SpinnerProgress {
   };
 
   static showVisualization = () => {
+    const visualizationYearFilter = document.getElementById('visualization-year-filter') as HTMLElement;
+    visualizationYearFilter.classList.add('visible');
+
     const visualizationContainer = document.getElementById('visualization-container') as HTMLElement;
     visualizationContainer.classList.add('visible');
 
