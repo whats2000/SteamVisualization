@@ -40,14 +40,14 @@
       .progress-bar {
         background-color: #5c7e10;
       }
-      #visualization-container {
+      #visualization-container, #visualization-container-2 {
         opacity: 0;
         transition: opacity 1s ease-in-out;
         text-align: center;
         margin: 0 auto;
         width: 100%;
       }
-      #visualization-container.visible {
+      #visualization-container.visible, #visualization-container-2.visible {
         opacity: 1;
       }
       svg {
@@ -92,6 +92,7 @@
 </div>
 <main class="container">
     <div id="visualization-container"></div>
+    <div id="visualization-container-2"></div>
     <div id="details-container"></div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

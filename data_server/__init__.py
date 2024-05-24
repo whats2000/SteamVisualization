@@ -1,3 +1,4 @@
+import sqlalchemy
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -16,7 +17,11 @@ def create_app():
 
     with app.app_context():
         from . import routes
-        db.create_all()
+        try:
+            db.create_all()
+        except sqlalchemy.exc.DatabaseError:
+            print("Database not available, please make sure you have start the mariadb server (xampp) and try again.")
+            exit(1)
 
         from .routes import bp as main_bp
         app.register_blueprint(main_bp)

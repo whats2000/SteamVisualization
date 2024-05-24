@@ -27,9 +27,11 @@ def get_games():
         games_list.append({
             'game_id': game.game_id,
             'name': game.name,
+            'release_date': game.release_date,
             'price': game.price,
             'header_image': game.header_image,
             'peak_ccu': game.peak_ccu,
+            'estimated_owners': game.estimated_owners,
         })
     return jsonify(games_list)
 

@@ -17,14 +17,18 @@ export class SteamDataFromJson implements SteamDataLoader {
     return Object.values(data).map((
       {
         name,
+        release_date,
         price,
         peak_ccu,
         header_image,
+        estimated_owners,
       }) => ({
       name,
+      release_date,
       price,
       peak_ccu,
       header_image,
+      estimated_owners,
     }));
   };
 
