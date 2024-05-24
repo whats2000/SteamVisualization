@@ -1,8 +1,8 @@
-import { SteamDataFromJson } from "./modals/steamDataFromJson";
-import { SteamDataFromDatabase } from "./modals/steamDataFromDatabase";
-import { SpinnerProgress } from "./modals/spinnerProgress";
-import { createScatterPlot } from "./plot/scatterPlot";
-import { timelinePlot } from "./plot/timelinePlot";
+import { SteamDataFromJson } from './modals/steamDataFromJson';
+import { SteamDataFromDatabase } from './modals/steamDataFromDatabase';
+import { SpinnerProgress } from './modals/spinnerProgress';
+import { createScatterPlot } from './plot/scatterPlot';
+import { timelinePlot } from './plot/timelinePlot';
 
 const checkDatabaseConnection = async (): Promise<boolean> => {
   return fetch('http://localhost:5000/api/check_database')
@@ -23,11 +23,11 @@ const checkDatabaseConnection = async (): Promise<boolean> => {
       console.log('No available database connection');
       return false;
     })
-    .catch(error => {
+    .catch(() => {
       console.log('Failed to check database connection:');
       return false;
     });
-}
+};
 
 const init = async () => {
   SpinnerProgress.showSpinner();
