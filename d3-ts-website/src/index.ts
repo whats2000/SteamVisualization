@@ -1,16 +1,24 @@
 import { createScatterPlot } from "./scatterPlot";
-import {SteamDataFromJson} from "./Modals/steamDataFromJson";
-import {SteamDataFromDatabase} from "./Modals/steamDataFromDatabase";
-import {SpinnerProgress} from "./Modals/spinnerProgress";
+import { SteamDataFromJson } from "./Modals/steamDataFromJson";
+import { SteamDataFromDatabase } from "./Modals/steamDataFromDatabase";
+import { SpinnerProgress } from "./Modals/spinnerProgress";
 
 const checkDatabaseConnection = async (): Promise<boolean> => {
   try {
     const response = await fetch('http://localhost:5000/api/check_database');
     if (!response.ok) {
+      console.log('No available database connection');
       return false;
     }
     const result = await response.json();
-    return result.status === 'online';
+
+    if (result.status === 'online') {
+      console.log('Database connection is online');
+      return true;
+    } else {
+      console.log('Database connection is offline');
+      return false;
+    }
   } catch (error) {
     console.error('Failed to check database connection:', error);
     return false;
