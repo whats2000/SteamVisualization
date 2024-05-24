@@ -23,5 +23,7 @@ export class SpinnerProgress {
   static showVisualization = () => {
     const visualizationContainer = document.getElementById('visualization-container') as HTMLElement;
     visualizationContainer.classList.add('visible');
+    const detailsContainer = document.getElementById('details-container') as HTMLElement;
+    detailsContainer.classList.add('visible');
   };
 }

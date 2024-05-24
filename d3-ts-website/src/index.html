@@ -69,6 +69,17 @@
         border-radius: 8px;
         pointer-events: none;
       }
+      #details-container {
+        opacity: 0;
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        background-color: #2a475e;
+        border-radius: 5px;
+      }
+      #details-container.visible {
+        opacity: 1;
+      }
     </style>
 </head>
 <body>
@@ -81,6 +92,7 @@
 </div>
 <main class="container">
     <div id="visualization-container"></div>
+    <div id="details-container"></div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="bundle.js"></script>

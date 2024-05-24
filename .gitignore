@@ -28,4 +28,4 @@ games.json
 .vite-react-ssg-temp/
 cache-images
 
-*.pyc
+data_server/__pycache__

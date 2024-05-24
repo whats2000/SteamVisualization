@@ -74,9 +74,20 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
       d3.select(this).attr('r', 2.5).style('fill', '#69b3a2');
       tooltip.transition().duration(500).style('opacity', 0);
     })
-    .on('click', function(_event, _d) {
+    .on('click', function(_event, d) {
       d3.selectAll('circle').style('stroke', 'none');
       d3.select(this).style('stroke', 'red').style('stroke-width', 2);
+
+      // Update details container with selected game details
+      const detailsContainer = document.getElementById('details-container');
+      if (detailsContainer) {
+        detailsContainer.innerHTML = `
+          <h3>${d.name}</h3>
+          <img src="${d.header_image}" alt="${d.name}" style="max-width: 100%; height: auto;">
+          <p>Price: ${d.price}</p>
+          <p>Peak CCU: ${d.peak_ccu}</p>
+        `;
+      }
     });
 
   // Add labels

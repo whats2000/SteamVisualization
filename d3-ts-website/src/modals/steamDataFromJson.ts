@@ -14,10 +14,17 @@ export class SteamDataFromJson implements SteamDataLoader {
       throw new Error(`Failed to load chunk ${chunkNumber}`);
     }
     const data: GameDataDictionary = await response.json();
-    return Object.values(data).map(({ name, price, peak_ccu }) => ({
+    return Object.values(data).map((
+      {
+        name,
+        price,
+        peak_ccu,
+        header_image,
+      }) => ({
       name,
       price,
       peak_ccu,
+      header_image,
     }));
   };
 

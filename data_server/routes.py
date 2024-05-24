@@ -28,6 +28,7 @@ def get_games():
             'game_id': game.game_id,
             'name': game.name,
             'price': game.price,
+            'header_image': game.header_image,
             'peak_ccu': game.peak_ccu,
         })
     return jsonify(games_list)
