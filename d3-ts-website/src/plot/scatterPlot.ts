@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import {GameData} from "./types";
+import {GameData} from "../types";
 
 export const createScatterPlot = (data: GameData[]) => {
     // Filter data to remove invalid entries

@@ -59,5 +59,5 @@ export interface GameData {
 }
 
 export interface GameDataDictionary {
-  [appId: string]: GameData;
+  [appId: string]: GameData | Partial<GameData>;
 }

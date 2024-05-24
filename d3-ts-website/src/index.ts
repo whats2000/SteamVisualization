@@ -1,7 +1,8 @@
-import { createScatterPlot } from "./scatterPlot";
 import { SteamDataFromJson } from "./Modals/steamDataFromJson";
 import { SteamDataFromDatabase } from "./Modals/steamDataFromDatabase";
 import { SpinnerProgress } from "./Modals/spinnerProgress";
+import { createScatterPlot } from "./plot/scatterPlot";
+import { timelinePlot } from "./plot/timelinePlot";
 
 const checkDatabaseConnection = async (): Promise<boolean> => {
   try {
@@ -31,10 +32,18 @@ const init = async () => {
   try {
     const isDatabaseOnline = await checkDatabaseConnection();
     const dataLoader = isDatabaseOnline ? new SteamDataFromDatabase() : new SteamDataFromJson();
-    const data = await dataLoader.loadAllData();
+    const scatterPlotData = await dataLoader.loadScatterPlotData();
 
     // Scatter plot
-    createScatterPlot(data);
+    createScatterPlot(scatterPlotData);
+
+    // Below data will not be loaded if the database is offline
+    if (!isDatabaseOnline) return;
+
+    const timelineData = await (dataLoader as SteamDataFromDatabase).loadTimelineData();
+
+    // Timeline plot
+    timelinePlot(timelineData);
   } catch (error) {
     console.error('Error loading data:', error);
   } finally {

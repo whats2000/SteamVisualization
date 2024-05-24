@@ -1,7 +1,7 @@
 from flask import jsonify, Blueprint, request
 from sqlalchemy.exc import OperationalError
 
-from .models import Game
+from .modals import Game
 
 bp = Blueprint('main', __name__)
 
@@ -28,6 +28,23 @@ def get_games():
             'price': game.price,
             'peak_ccu': game.peak_ccu,
         })
+    return jsonify(games_list)
+
+@bp.route('/api/game_timeline', methods=['GET'])
+def get_game_timeline():
+    games = Game.query.all()
+
+    # TODO: Change this to the actual timeline needed for the frontend
+    games_list = []
+    for game in games:
+        games_list.append({
+            'game_id': game.game_id,
+            'name': game.name,
+            'price': game.price,
+            'peak_ccu': game.peak_ccu,
+            'release_date': game.release_date,
+        })
+
     return jsonify(games_list)
 
 # Register blueprint
