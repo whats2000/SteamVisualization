@@ -1,7 +1,17 @@
 from flask import jsonify, Blueprint, request
+from sqlalchemy.exc import OperationalError
+
 from .models import Game
 
 bp = Blueprint('main', __name__)
+
+@bp.route('/api/check_database', methods=['GET'])
+def check_database():
+    try:
+        Game.query.first()
+        return jsonify({'status': 'online'})
+    except OperationalError:
+        return jsonify({'status': 'offline'})
 
 @bp.route('/api/games_price_peak_ccu', methods=['GET'])
 def get_games():
