@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = (env, argv) => ({
   entry: './src/index.ts',
@@ -34,6 +35,17 @@ module.exports = (env, argv) => ({
           },
         ],
       },
+      {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+      {
+        test: /\.(woff(2)?|eot|ttf|otf|svg|jpg|jpeg|png|gif)$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'assets/[hash][ext][query]',
+        },
+      },
     ],
   },
   resolve: {
@@ -57,6 +69,10 @@ module.exports = (env, argv) => ({
       patterns: [
         { from: 'src/data', to: 'data' },
       ],
+    }),
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+      chunkFilename: '[id].css',
     }),
   ],
 });

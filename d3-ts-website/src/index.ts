@@ -1,3 +1,5 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import { SteamDataFromJson } from './modals/steamDataFromJson';
 import { SteamDataFromDatabase } from './modals/steamDataFromDatabase';
 import { SpinnerProgress } from './modals/spinnerProgress';
