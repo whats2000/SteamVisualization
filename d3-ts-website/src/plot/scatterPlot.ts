@@ -21,18 +21,22 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
   });
 
   let activeLegend: string | null = null;
+  let selectedPoint: ScatterPlotData | null = null;
 
   // Set dimensions and margins for the plot
   const margin = { top: 20, right: 150, bottom: 40, left: 50 };
   const width = 600 - margin.left - margin.right;
   const height = 500 - margin.top - margin.bottom;
 
+  let currentBrushExtent: [[number, number], [number, number]] = [[0, 0], [width, height]];
+
   // Remove any existing SVG elements
   d3.select('#visualization-container').select('svg').remove();
   d3.select('#visualization-container-2').select('svg').remove();
 
   // Append SVG and group elements
-  const svg = d3.select('#visualization-container').append('svg')
+  const svg = d3.select('#visualization-container')
+    .append('svg')
     .attr('width', width + margin.left + margin.right)
     .attr('height', height + margin.top + margin.bottom)
     .append('g')
@@ -47,12 +51,16 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
 
   // Set scales
   const x = d3.scaleSymlog()
-    .domain([d3.min(filteredData, d => d.price) as number, d3.max(filteredData, d => d.price) as number])
-    .range([0, width]);
+    .domain([
+      d3.min(filteredData, d => d.price) as number,
+      d3.max(filteredData, d => d.price) as number
+    ]).range([0, width]);
 
   const y = d3.scaleSymlog()
-    .domain([d3.min(filteredData, d => d.peak_ccu) as number, d3.max(filteredData, d => d.peak_ccu) as number])
-    .range([height, 0]);
+    .domain([
+      d3.min(filteredData, d => d.peak_ccu) as number,
+      d3.max(filteredData, d => d.peak_ccu) as number]
+    ).range([height, 0]);
 
   // Define color scale with a sequential color scheme
   const colorScale = d3.scaleSequential(d3.interpolatePlasma)
@@ -81,17 +89,9 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
     .selectAll('text')
     .style('fill', 'white');
 
-  // Add dots with interactivity
-  const circlesGroup = svg.append('g');
-  circlesGroup.selectAll('circle')
-    .data(filteredData)
-    .enter()
-    .append('circle')
-    .attr('cx', d => x(d.price as number))
-    .attr('cy', d => y(d.peak_ccu as number))
-    .attr('r', 2.5)
-    .style('fill', d => colorScale(ownerRanges.indexOf(d.estimated_owners)))
-    .style('opacity', 0.5);
+  // Add dots without interactivity on the original plot
+  const circlesGroup: d3.Selection<SVGGElement, unknown, HTMLElement, any> = svg.append('g');
+  resetCircleGroup(circlesGroup);
 
   // Add brush
   const brush = d3.brush()
@@ -134,7 +134,7 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
     .attr('height', 18)
     .style('fill', (_d, i) => colorScale(i))
     .style('cursor', 'pointer')
-    .on('click', function (_event, d) {
+    .on('click', function(_event, d) {
       const isActive = activeLegend === d;
       activeLegend = isActive ? null : d;
 
@@ -143,7 +143,7 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
         d3.select(this).classed('active', true);
       }
 
-      updateCircles();
+      updateCircles(circlesGroup);
     });
 
   legend.selectAll('text')
@@ -172,7 +172,12 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
     const extent = event.selection;
     if (!extent) return;
 
-    const [[x0, y0], [x1, y1]] = extent as [[number, number], [number, number]];
+    currentBrushExtent = extent as [[number, number], [number, number]];
+    updateZoomPlot();
+  }
+
+  function updateZoomPlot() {
+    const [[x0, y0], [x1, y1]] = currentBrushExtent;
 
     // Create new scales for a zoomed region
     const xZoom = d3.scaleSymlog()
@@ -184,48 +189,71 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
       .range([height, 0]);
 
     // Remove existing zoomed svg
-    d3.select('#zoom-container').remove();
+    d3.select('#zoom-container').select('g').remove();
 
-    // Append new zoomed svg
-    const zoomSvgGroup = d3.select('#visualization-container-2').append('svg')
-      .attr('id', 'zoom-container')
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
+    // Append new zoomed svg group
+    const zoomSvgGroup = d3.select('#zoom-container')
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Add zoomed dots
-    zoomSvgGroup.append('g')
+    const zoomedCircles = zoomSvgGroup.append('g')
       .selectAll('circle')
-      .data(filteredData.filter(d => x(d.price) >= x0 && x(d.price) <= x1 && y(d.peak_ccu) >= y0 && y(d.peak_ccu) <= y1))
-      .enter()
+      .data(filteredData.filter(d =>
+        x(d.price) >= x0 &&
+        x(d.price) <= x1 &&
+        y(d.peak_ccu) >= y0 &&
+        y(d.peak_ccu) <= y1),
+      ).enter()
       .append('circle')
       .attr('cx', d => xZoom(d.price as number))
       .attr('cy', d => yZoom(d.peak_ccu as number))
-      .attr('r', 5)
-      .style('fill', d => colorScale(ownerRanges.indexOf(d.estimated_owners)))
-      .style('opacity', d => (activeLegend && d.estimated_owners !== activeLegend) ? 0.1 : 0.5)
-      .on('mouseover', function (event, d) {
-        d3.select(this).attr('r', 5).style('fill', '#ffcc00');
-        tooltip.transition().duration(200).style('opacity', .9);
-        tooltip.html(`Name: ${d.name}<br/>Price: ${d.price}<br/>Peak CCU: ${d.peak_ccu}<br/>Estimated Owners: ${d.estimated_owners}`)
-          .style('left', (event.pageX + 10) + 'px')
-          .style('top', (event.pageY - 28) + 'px');
+      .attr('r', d => (d === selectedPoint ? 7 : 5))
+      .style('fill', d =>
+        d === selectedPoint ? 'white' :
+          colorScale(ownerRanges.indexOf(d.estimated_owners)),
+      ).style('opacity', d =>
+        (activeLegend && d.estimated_owners !== activeLegend) ? 0.01 : 0.5,
+      ).on('mouseover', function(event, d) {
+        if (d !== selectedPoint) {
+          d3.select(this).attr('r', 7).style('fill', 'white');
+          tooltip.transition().duration(200).style('opacity', .9);
+          tooltip.html(`Name: ${d.name}<br/>` +
+            `Price: ${d.price}<br/>` +
+            `Peak CCU: ${d.peak_ccu}<br/>` +
+            `Estimated Owners: ${d.estimated_owners}`,
+          )
+            .style('left', (event.pageX + 10) + 'px')
+            .style('top', (event.pageY - 28) + 'px');
+        }
       })
-      .on('mouseout', function (_d) {
-        d3.select(this)
+      .on('mouseout', function(_event, d) {
+        tooltip.transition().duration(500).style('opacity', 0);
+
+        if (d === selectedPoint) {
+          d3.select(this).style('fill', 'white');
+          return;
+        }
+        (d3.select(this) as unknown as d3.Selection<SVGCircleElement, ScatterPlotData, SVGGElement, unknown>)
           .attr('r', 5)
           .style('fill', (
-          // @ts-expect-error
-          (d: ScatterPlotData) => colorScale(ownerRanges.indexOf(d.estimated_owners)) as any),
-        );
-        tooltip.transition().duration(500).style('opacity', 0);
+            (d: ScatterPlotData) => colorScale(ownerRanges.indexOf(d.estimated_owners)) as any),
+          );
       })
-      .on('click', function (_event, d) {
-        d3.selectAll('circle').style('stroke', 'none');
-        d3.select(this)
-          .style('stroke', 'red')
-          .style('stroke-width', 2);
+      .on('click', function(_event, d) {
+        if (selectedPoint) {
+          d3.select(this)
+            .style('fill', colorScale(ownerRanges.indexOf(selectedPoint.estimated_owners)))
+            .style('opacity', 0.5);
+        }
+        selectedPoint = d;
+        (d3.selectAll('#zoom-container circle') as unknown as d3.Selection<SVGCircleElement, ScatterPlotData, SVGGElement, unknown>)
+          .attr('r', 5)
+          .style('opacity', d => (activeLegend && d.estimated_owners !== activeLegend) ? 0.01 : 0.5)
+          .style('fill', (
+            (d: ScatterPlotData) => d === selectedPoint ? 'white' : colorScale(ownerRanges.indexOf(d.estimated_owners)) as any),
+          );
+        d3.select(this).attr('r', 7).style('opacity', 1);
 
         // Update details container with selected game details
         const detailsContainer = document.getElementById('details-container') as HTMLElement;
@@ -256,33 +284,7 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
       .selectAll('text')
       .style('fill', 'white');
 
-    // Add zoom behavior
-    const zoom = d3.zoom<SVGSVGElement, unknown>()
-      .scaleExtent([1, 10])
-      .translateExtent([[-width, -height], [2 * width, 2 * height]])
-      .extent([[0, 0], [width, height]])
-      .on('zoom', zoomed);
-
-    zoomSvgGroup.call(zoom as any);
-
-    function zoomed(event: { transform: d3.ZoomTransform }) {
-      const newX = event.transform.rescaleX(xZoom);
-      const newY = event.transform.rescaleY(yZoom);
-
-      zoomSvgGroup.selectAll('circle')
-        // @ts-expect-error
-        .attr('cx', d => newX(d.price as number))
-        // @ts-expect-error
-        .attr('cy', d => newY(d.peak_ccu as number));
-
-      zoomSvgGroup.select('.x-axis').call(d3.axisBottom(newX).ticks(10, d3.format('~g')) as any)
-        .selectAll('text')
-        .style('fill', 'white');
-
-      zoomSvgGroup.select('.y-axis').call(d3.axisLeft(newY).ticks(10, d3.format('~g')) as any)
-        .selectAll('text')
-        .style('fill', 'white');
-    }
+    updateZoomCircles(zoomedCircles);
   }
 
   // Add histogram for game release years
@@ -295,6 +297,13 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
     });
 
     circlesGroup.selectAll('circle').remove();
+    resetCircleGroup(circlesGroup);
+
+    updateCircles(circlesGroup);
+    updateZoomPlot();
+  }
+
+  function resetCircleGroup(circlesGroup: d3.Selection<SVGGElement, unknown, HTMLElement, any>) {
     circlesGroup.selectAll('circle')
       .data(filteredData)
       .enter()
@@ -304,23 +313,23 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
       .attr('r', 2.5)
       .style('fill', d => colorScale(ownerRanges.indexOf(d.estimated_owners)))
       .style('opacity', 0.5);
-
-    updateCircles();
   }
 
-  function updateCircles() {
-    circlesGroup.selectAll('circle').transition().duration(500)
-      // @ts-expect-error
-      .style('opacity', (d: ScatterPlotData)=> {
+  function updateCircles(circlesGroup: d3.Selection<SVGGElement, unknown, HTMLElement, any>) {
+    (circlesGroup.selectAll('circle') as d3.Selection<SVGCircleElement, ScatterPlotData, SVGGElement, unknown>)
+      .transition()
+      .duration(500)
+      .style('opacity', (d: ScatterPlotData) => {
         if (!activeLegend) {
           return 0.5;
         }
-        return d.estimated_owners === activeLegend ? 1 : 0.1;
+        return d.estimated_owners === activeLegend ? 1 : 0.01;
       });
 
     // Update the legend opacity
-    legend.selectAll('rect').transition().duration(500)
-      // @ts-expect-error
+    (legend.selectAll('rect') as d3.Selection<SVGRectElement, string, SVGGElement, unknown>)
+      .transition()
+      .duration(500)
       .style('opacity', (d: string) => {
         if (!activeLegend) {
           return 1;
@@ -328,15 +337,23 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
         return d === activeLegend ? 1 : 0.01;
       });
 
-    // Update the zoomed circles
-    const zoomSvg = d3.select('#zoom-container');
-    zoomSvg.selectAll('circle').transition().duration(500)
-      // @ts-expect-error
-      .style('opacity', (d: ScatterPlotData) => {
-        if (!activeLegend) {
-          return 0.5;
-        }
-        return d.estimated_owners === activeLegend ? 1 : 0.1;
-      });
+    updateZoomCircles(d3.selectAll('#zoom-container circle') as any);
   }
+
+  function updateZoomCircles(zoomedCircles: d3.Selection<SVGCircleElement, ScatterPlotData, SVGGElement, unknown>) {
+    zoomedCircles.transition().duration(500)
+      .style('opacity', (d: ScatterPlotData) => {
+        if (d === selectedPoint) {
+          return 1;
+        }
+
+        if (!activeLegend) {
+          return d === selectedPoint ? 1 : 0.5;
+        }
+        return d.estimated_owners === activeLegend ? (d === selectedPoint ? 1 : 1) : 0.01;
+      })
+      .attr('r', (d: ScatterPlotData) => d === selectedPoint ? 7 : 5);
+  }
+
+  updateZoomPlot();
 };
