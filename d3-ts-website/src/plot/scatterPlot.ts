@@ -17,9 +17,17 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
 
   // Remove any existing SVG elements
   d3.select('#visualization-container').select('svg').remove();
+  d3.select('#visualization-container-2').select('svg').remove();
 
   // Append SVG and group elements
   const svg = d3.select('#visualization-container').append('svg')
+    .attr('width', width + margin.left + margin.right)
+    .attr('height', height + margin.top + margin.bottom)
+    .append('g')
+    .attr('transform', `translate(${margin.left},${margin.top})`);
+
+  d3.select('#visualization-container-2').append('svg')
+    .attr('id', 'zoom-container')
     .attr('width', width + margin.left + margin.right)
     .attr('height', height + margin.top + margin.bottom)
     .append('g')
@@ -230,6 +238,9 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
       .style('opacity', 0.5);
 
     // Also update the zoomed scatter plot
+    const brushSelection = d3.brushSelection(svg.select('.brush').node() as SVGSVGElement);
+    if (brushSelection) {
+      updateChart({ selection: brushSelection } as d3.D3BrushEvent<SVGSVGElement>);
+    }
   }
 };
-
