@@ -90,7 +90,7 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
     .style('fill', 'white');
 
   // Add dots without interactivity on the original plot
-  const circlesGroup: d3.Selection<SVGGElement, unknown, HTMLElement, any> = svg.append('g');
+  const circlesGroup = svg.append('g');
   resetCircleGroup(circlesGroup);
 
   // Add brush
@@ -237,7 +237,7 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
         (d3.select(this) as unknown as d3.Selection<SVGCircleElement, ScatterPlotData, SVGGElement, unknown>)
           .attr('r', 5)
           .style('fill', (
-            (d: ScatterPlotData) => colorScale(ownerRanges.indexOf(d.estimated_owners)) as any),
+            (d: ScatterPlotData) => colorScale(ownerRanges.indexOf(d.estimated_owners))),
           );
       })
       .on('click', function(_event, d) {
@@ -251,7 +251,7 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
           .attr('r', 5)
           .style('opacity', d => (activeLegend && d.estimated_owners !== activeLegend) ? 0.01 : 0.5)
           .style('fill', (
-            (d: ScatterPlotData) => d === selectedPoint ? 'white' : colorScale(ownerRanges.indexOf(d.estimated_owners)) as any),
+            (d: ScatterPlotData) => d === selectedPoint ? 'white' : colorScale(ownerRanges.indexOf(d.estimated_owners))),
           );
         d3.select(this).attr('r', 7).style('opacity', 1);
 
