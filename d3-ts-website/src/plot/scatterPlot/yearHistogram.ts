@@ -4,7 +4,7 @@ import * as d3 from 'd3';
 export const createYearHistogram = (data: ScatterPlotData[], minYear: number, maxYear: number, callback: (years: [number, number]) => void) => {
   const years = data.map(d => new Date(d.release_date).getFullYear());
   const margin = { top: 20, right: 30, bottom: 40, left: 50 };
-  const width = 960 - margin.left - margin.right;
+  const width = 1200 - margin.left - margin.right;
   const height = 200 - margin.top - margin.bottom;
 
   // Remove any existing SVG elements

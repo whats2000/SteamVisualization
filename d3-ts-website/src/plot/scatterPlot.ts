@@ -12,7 +12,7 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
 
   // Set dimensions and margins for the plot
   const margin = { top: 20, right: 30, bottom: 40, left: 50 };
-  const width = 960 - margin.left - margin.right;
+  const width = 600 - margin.left - margin.right;
   const height = 500 - margin.top - margin.bottom;
 
   // Remove any existing SVG elements
@@ -133,7 +133,7 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
       .append('circle')
       .attr('cx', d => xZoom(d.price as number))
       .attr('cy', d => yZoom(d.peak_ccu as number))
-      .attr('r', 2.5)
+      .attr('r', 5)
       .style('fill', d => colorScale(d.estimated_owners))
       .style('opacity', 0.5)
       .on('mouseover', function(event, d) {
@@ -144,7 +144,7 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
           .style('top', (event.pageY - 28) + 'px');
       })
       .on('mouseout', function(_d) {
-        d3.select(this).attr('r', 2.5).style('fill', ((d: ScatterPlotData) => colorScale(d.estimated_owners as string)) as any);
+        d3.select(this).attr('r', 5).style('fill', ((d: ScatterPlotData) => colorScale(d.estimated_owners as string)) as any);
         tooltip.transition().duration(500).style('opacity', 0);
       })
       .on('click', function(_event, d) {
@@ -152,7 +152,9 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
         d3.select(this).style('stroke', 'red').style('stroke-width', 2);
 
         // Update details container with selected game details
-        const detailsContainer = document.getElementById('details-container');
+        const detailsContainer = document.getElementById('details-container') as HTMLElement;
+        detailsContainer.classList.add('visible');
+
         if (detailsContainer) {
           detailsContainer.innerHTML = `
             <h3>${d.name}</h3>
@@ -226,6 +228,8 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
       .attr('r', 2.5)
       .style('fill', d => colorScale(d.estimated_owners))
       .style('opacity', 0.5);
+
+    // Also update the zoomed scatter plot
   }
 };
 

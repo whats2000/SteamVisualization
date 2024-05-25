@@ -29,8 +29,5 @@ export class SpinnerProgress {
 
     const visualizationContainer2 = document.getElementById('visualization-container-2') as HTMLElement;
     visualizationContainer2.classList.add('visible');
-
-    const detailsContainer = document.getElementById('details-container') as HTMLElement;
-    detailsContainer.classList.add('visible');
   };
 }

@@ -1,102 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D3 Visualization</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>D3 Visualization</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <style>
       body {
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        background-color: #1b2838;
-        color: #c7d5e0;
-        font-family: 'Arial', sans-serif;
+          min-height: 100vh;
+          background-color: #1b2838;
+          color: #c7d5e0;
+          font-family: 'Arial', sans-serif;
       }
+
       #loading-container {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
-        width: 80%;
-        max-width: 300px;
-        color: #c7d5e0;
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          text-align: center;
+          width: 80%;
+          max-width: 300px;
+          color: #c7d5e0;
       }
+
       #spinner {
-        width: 3rem;
-        height: 3rem;
-        margin-bottom: 1rem;
-        margin-left: auto;
-        margin-right: auto;
-        border: 0.3rem solid #c7d5e0;
-        border-top: 0.3rem solid #5c7e10;
+          width: 3rem;
+          height: 3rem;
+          margin-bottom: 1rem;
+          margin-left: auto;
+          margin-right: auto;
+          border: 0.3rem solid #c7d5e0;
+          border-top: 0.3rem solid #5c7e10;
       }
+
       .progress {
-        background-color: #2a475e;
+          background-color: #2a475e;
       }
+
       .progress-bar {
-        background-color: #5c7e10;
+          background-color: #5c7e10;
       }
-      #visualization-container, #visualization-container-2, #visualization-year-filter {
-        opacity: 0;
-        transition: opacity 1s ease-in-out;
-        text-align: center;
-        margin: 0 auto;
-        width: 100%;
-      }
-      #visualization-container.visible, #visualization-container-2.visible, #visualization-year-filter.visible {
-        opacity: 1;
-      }
-      svg {
-        margin: 0 auto;
-        display: block;
-        background-color: #16202d;
-        border: 1px solid #5c7e10;
-        border-radius: 5px;
-      }
-      .tooltip {
-        position: absolute;
-        text-align: center;
-        width: auto;
-        height: auto;
-        padding: 8px;
-        font: 12px sans-serif;
-        background: white;
-        border: 0;
-        border-radius: 8px;
-        pointer-events: none;
-      }
+
+      #visualization-container,
+      #visualization-container-2,
+      #visualization-year-filter,
       #details-container {
-        opacity: 0;
-        margin-top: 20px;
-        padding: 10px;
-        border: 1px solid #ccc;
-        background-color: #2a475e;
-        border-radius: 5px;
+          opacity: 0;
+          transition: opacity 1s ease-in-out;
+          text-align: center;
       }
+      #visualization-year-filter {
+          max-width: 1200px;
+      }
+      #visualization-container,
+      #visualization-container-2 {
+          max-width: 600px;
+      }
+      #visualization-container.visible,
+      #visualization-container-2.visible,
+      #visualization-year-filter.visible,
       #details-container.visible {
-        opacity: 1;
+          opacity: 1;
       }
-    </style>
+
+      svg {
+          display: block;
+          background-color: #16202d;
+          border: 1px solid #5c7e10;
+          border-radius: 5px;
+      }
+
+      .tooltip {
+          position: absolute;
+          text-align: center;
+          width: auto;
+          height: auto;
+          padding: 8px;
+          font: 12px sans-serif;
+          background: white;
+          border: 0;
+          border-radius: 8px;
+          pointer-events: none;
+      }
+
+      #details-container {
+          margin-top: 20px;
+          padding: 10px;
+          border: 1px solid #ccc;
+          background-color: #2a475e;
+          border-radius: 5px;
+      }
+  </style>
 </head>
 <body>
 <div id="loading-container">
-    <div id="spinner" class="spinner-border text-primary" role="status"></div>
-    <span>Loading...</span>
-    <div class="progress" style="height: 20px; margin-top: 1rem;">
-        <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-    </div>
+  <div id="spinner" class="spinner-border text-primary" role="status"></div>
+  <span>Loading...</span>
+  <div class="progress" style="height: 20px; margin-top: 1rem;">
+    <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0;" aria-valuenow="0" aria-valuemin="0"
+         aria-valuemax="100"></div>
+  </div>
 </div>
 <main class="container">
-    <div id="visualization-year-filter"></div>
-    <div id="visualization-container"></div>
-    <div id="visualization-container-2"></div>
-    <div id="details-container"></div>
+  <div class="row justify-content-center">
+    <div class="col p-0" id="visualization-year-filter"></div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col p-0" id="visualization-container"></div>
+    <div class="col p-0" id="visualization-container-2"></div>
+  </div>
+  <div class="container" id="details-container"></div>
 </main>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 <script src="bundle.js"></script>
 </body>
 </html>
