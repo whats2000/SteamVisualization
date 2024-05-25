@@ -67,7 +67,7 @@ export const createYearHistogram = (data: ScatterPlotData[], minYear: number, ma
   // Y label
   svg.append('text')
     .attr('transform', 'rotate(-90)')
-    .attr('y', -margin.left + 50)
+    .attr('y', -margin.left + 55)
     .attr('x', -height / 2)
     .attr('dy', '1em')
     .style('text-anchor', 'middle')

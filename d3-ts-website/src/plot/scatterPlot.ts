@@ -8,10 +8,20 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
   const minYear = d3.min(years) as number;
   const maxYear = d3.max(years) as number;
 
-  let filteredData = data.filter(d => d.peak_ccu > 0);
+  const ownerRanges = [
+    '0 - 0', '0 - 20000', '20000 - 50000', '50000 - 100000',
+    '100000 - 200000', '200000 - 500000', '500000 - 1000000', '1000000 - 2000000',
+    '2000000 - 5000000', '5000000 - 10000000', '10000000 - 20000000',
+    '20000000 - 50000000', '50000000 - 100000000', '100000000 - 200000000',
+  ];
+
+  let filteredData = data.filter(d => {
+    const year = new Date(d.release_date).getFullYear();
+    return d.peak_ccu > 0 && year >= minYear && year <= maxYear;
+  });
 
   // Set dimensions and margins for the plot
-  const margin = { top: 20, right: 30, bottom: 40, left: 50 };
+  const margin = { top: 20, right: 150, bottom: 40, left: 50 };
   const width = 600 - margin.left - margin.right;
   const height = 500 - margin.top - margin.bottom;
 
@@ -42,9 +52,9 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
     .domain([d3.min(filteredData, d => d.peak_ccu) as number, d3.max(filteredData, d => d.peak_ccu) as number])
     .range([height, 0]);
 
-  // Define color scale
-  const colorScale = d3.scaleOrdinal(d3.schemeCategory10)
-    .domain(filteredData.map(d => d.estimated_owners));
+  // Define color scale with a sequential color scheme
+  const colorScale = d3.scaleSequential(d3.interpolatePlasma)
+    .domain([0, ownerRanges.length - 1]);
 
   // Add X axis
   svg.append('g')
@@ -78,7 +88,7 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
     .attr('cx', d => x(d.price as number))
     .attr('cy', d => y(d.peak_ccu as number))
     .attr('r', 2.5)
-    .style('fill', d => colorScale(d.estimated_owners))
+    .style('fill', d => colorScale(ownerRanges.indexOf(d.estimated_owners)))
     .style('opacity', 0.5);
 
   // Add brush
@@ -106,6 +116,43 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
     .attr('x', -margin.top)
     .text('Peak CCU (Symlog Scale)')
     .style('fill', 'white');
+
+  // Add color legend
+  const legend = svg.append('g')
+    .attr('class', 'legend')
+    .attr('transform', `translate(${width + 20}, 0)`);
+
+  legend.selectAll('rect')
+    .data(ownerRanges)
+    .enter()
+    .append('rect')
+    .attr('x', 0)
+    .attr('y', (_d, i) => i * 20)
+    .attr('width', 18)
+    .attr('height', 18)
+    .style('fill', (_d, i) => colorScale(i));
+
+  legend.selectAll('text')
+    .data(ownerRanges)
+    .enter()
+    .append('text')
+    .attr('x', 24)
+    .attr('y', (_d, i) => i * 20 + 9)
+    .attr('dy', '.35em')
+    .style('fill', 'white')
+    .text(d => {
+      const range = d.split(' - ').map(value => {
+        const num = parseInt(value);
+        if (num >= 1000000) {
+          return `${num / 1000000}M`;
+        } else if (num >= 1000) {
+          return `${num / 1000}K`;
+        } else {
+          return num.toString();
+        }
+      });
+      return range.join(' - ');
+    });
 
   function updateChart(event: d3.D3BrushEvent<SVGSVGElement>) {
     const extent = event.selection;
@@ -142,7 +189,7 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
       .attr('cx', d => xZoom(d.price as number))
       .attr('cy', d => yZoom(d.peak_ccu as number))
       .attr('r', 5)
-      .style('fill', d => colorScale(d.estimated_owners))
+      .style('fill', d => colorScale(ownerRanges.indexOf(d.estimated_owners)))
       .style('opacity', 0.5)
       .on('mouseover', function(event, d) {
         d3.select(this).attr('r', 5).style('fill', '#ffcc00');
@@ -152,7 +199,10 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
           .style('top', (event.pageY - 28) + 'px');
       })
       .on('mouseout', function(_d) {
-        d3.select(this).attr('r', 5).style('fill', ((d: ScatterPlotData) => colorScale(d.estimated_owners as string)) as any);
+        d3.select(this).attr('r', 5).style('fill', (
+          // @ts-expect-error
+          (d: ScatterPlotData) => colorScale(ownerRanges.indexOf(d.estimated_owners)) as any),
+        );
         tooltip.transition().duration(500).style('opacity', 0);
       })
       .on('click', function(_event, d) {
@@ -234,13 +284,13 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
       .attr('cx', d => x(d.price as number))
       .attr('cy', d => y(d.peak_ccu as number))
       .attr('r', 2.5)
-      .style('fill', d => colorScale(d.estimated_owners))
+      .style('fill', d => colorScale(ownerRanges.indexOf(d.estimated_owners)))
       .style('opacity', 0.5);
 
     // Also update the zoomed scatter plot
-    const brushSelection = d3.brushSelection(svg.select('.brush').node() as SVGSVGElement);
+    const brushSelection = d3.brushSelection(svg.select('.brush').node() as any);
     if (brushSelection) {
-      updateChart({ selection: brushSelection } as d3.D3BrushEvent<SVGSVGElement>);
+      updateChart({ selection: brushSelection } as any);
     }
   }
 };
