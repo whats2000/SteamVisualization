@@ -20,6 +20,8 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
     return d.peak_ccu > 0 && year >= minYear && year <= maxYear;
   });
 
+  let activeLegend: string | null = null;
+
   // Set dimensions and margins for the plot
   const margin = { top: 20, right: 150, bottom: 40, left: 50 };
   const width = 600 - margin.left - margin.right;
@@ -56,6 +58,16 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
   const colorScale = d3.scaleSequential(d3.interpolatePlasma)
     .domain([0, ownerRanges.length - 1]);
 
+  // Tooltip
+  const tooltip = d3.select('body').append('div')
+    .attr('class', 'tooltip')
+    .style('opacity', 0)
+    .style('position', 'absolute')
+    .style('background-color', 'white')
+    .style('padding', '5px')
+    .style('border-radius', '5px')
+    .style('box-shadow', '0 0 10px rgba(0,0,0,0.5)');
+
   // Add X axis
   svg.append('g')
     .attr('transform', `translate(0,${height})`)
@@ -69,19 +81,9 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
     .selectAll('text')
     .style('fill', 'white');
 
-  // Tooltip
-  const tooltip = d3.select('body').append('div')
-    .attr('class', 'tooltip')
-    .style('opacity', 0)
-    .style('position', 'absolute')
-    .style('background-color', 'white')
-    .style('padding', '5px')
-    .style('border-radius', '5px')
-    .style('box-shadow', '0 0 10px rgba(0,0,0,0.5)');
-
   // Add dots with interactivity
-  svg.append('g')
-    .selectAll('circle')
+  const circlesGroup = svg.append('g');
+  circlesGroup.selectAll('circle')
     .data(filteredData)
     .enter()
     .append('circle')
@@ -130,7 +132,19 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
     .attr('y', (_d, i) => i * 20)
     .attr('width', 18)
     .attr('height', 18)
-    .style('fill', (_d, i) => colorScale(i));
+    .style('fill', (_d, i) => colorScale(i))
+    .style('cursor', 'pointer')
+    .on('click', function (_event, d) {
+      const isActive = activeLegend === d;
+      activeLegend = isActive ? null : d;
+
+      d3.selectAll('.legend rect').classed('active', false);
+      if (!isActive) {
+        d3.select(this).classed('active', true);
+      }
+
+      updateCircles();
+    });
 
   legend.selectAll('text')
     .data(ownerRanges)
@@ -173,7 +187,7 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
     d3.select('#zoom-container').remove();
 
     // Append new zoomed svg
-    const zoomSvg = d3.select('#visualization-container-2').append('svg')
+    const zoomSvgGroup = d3.select('#visualization-container-2').append('svg')
       .attr('id', 'zoom-container')
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
@@ -181,7 +195,7 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Add zoomed dots
-    zoomSvg.append('g')
+    zoomSvgGroup.append('g')
       .selectAll('circle')
       .data(filteredData.filter(d => x(d.price) >= x0 && x(d.price) <= x1 && y(d.peak_ccu) >= y0 && y(d.peak_ccu) <= y1))
       .enter()
@@ -190,24 +204,28 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
       .attr('cy', d => yZoom(d.peak_ccu as number))
       .attr('r', 5)
       .style('fill', d => colorScale(ownerRanges.indexOf(d.estimated_owners)))
-      .style('opacity', 0.5)
-      .on('mouseover', function(event, d) {
+      .style('opacity', d => (activeLegend && d.estimated_owners !== activeLegend) ? 0.1 : 0.5)
+      .on('mouseover', function (event, d) {
         d3.select(this).attr('r', 5).style('fill', '#ffcc00');
         tooltip.transition().duration(200).style('opacity', .9);
         tooltip.html(`Name: ${d.name}<br/>Price: ${d.price}<br/>Peak CCU: ${d.peak_ccu}<br/>Estimated Owners: ${d.estimated_owners}`)
           .style('left', (event.pageX + 10) + 'px')
           .style('top', (event.pageY - 28) + 'px');
       })
-      .on('mouseout', function(_d) {
-        d3.select(this).attr('r', 5).style('fill', (
+      .on('mouseout', function (_d) {
+        d3.select(this)
+          .attr('r', 5)
+          .style('fill', (
           // @ts-expect-error
           (d: ScatterPlotData) => colorScale(ownerRanges.indexOf(d.estimated_owners)) as any),
         );
         tooltip.transition().duration(500).style('opacity', 0);
       })
-      .on('click', function(_event, d) {
+      .on('click', function (_event, d) {
         d3.selectAll('circle').style('stroke', 'none');
-        d3.select(this).style('stroke', 'red').style('stroke-width', 2);
+        d3.select(this)
+          .style('stroke', 'red')
+          .style('stroke-width', 2);
 
         // Update details container with selected game details
         const detailsContainer = document.getElementById('details-container') as HTMLElement;
@@ -226,14 +244,14 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
       });
 
     // Add zoomed X axis
-    zoomSvg.append('g')
+    zoomSvgGroup.append('g')
       .attr('transform', `translate(0,${height})`)
       .call(d3.axisBottom(xZoom).ticks(10, d3.format('~g')))
       .selectAll('text')
       .style('fill', 'white');
 
     // Add zoomed Y axis
-    zoomSvg.append('g')
+    zoomSvgGroup.append('g')
       .call(d3.axisLeft(yZoom).ticks(10, d3.format('~g')))
       .selectAll('text')
       .style('fill', 'white');
@@ -245,23 +263,23 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
       .extent([[0, 0], [width, height]])
       .on('zoom', zoomed);
 
-    zoomSvg.call(zoom as any);
+    zoomSvgGroup.call(zoom as any);
 
     function zoomed(event: { transform: d3.ZoomTransform }) {
       const newX = event.transform.rescaleX(xZoom);
       const newY = event.transform.rescaleY(yZoom);
 
-      zoomSvg.selectAll('circle')
+      zoomSvgGroup.selectAll('circle')
         // @ts-expect-error
         .attr('cx', d => newX(d.price as number))
         // @ts-expect-error
         .attr('cy', d => newY(d.peak_ccu as number));
 
-      zoomSvg.select('.x-axis').call(d3.axisBottom(newX).ticks(10, d3.format('~g')) as any)
+      zoomSvgGroup.select('.x-axis').call(d3.axisBottom(newX).ticks(10, d3.format('~g')) as any)
         .selectAll('text')
         .style('fill', 'white');
 
-      zoomSvg.select('.y-axis').call(d3.axisLeft(newY).ticks(10, d3.format('~g')) as any)
+      zoomSvgGroup.select('.y-axis').call(d3.axisLeft(newY).ticks(10, d3.format('~g')) as any)
         .selectAll('text')
         .style('fill', 'white');
     }
@@ -276,8 +294,8 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
       return d.peak_ccu > 0 && year >= newMinYear && year <= newMaxYear;
     });
 
-    svg.selectAll('circle').remove();
-    svg.selectAll('circle')
+    circlesGroup.selectAll('circle').remove();
+    circlesGroup.selectAll('circle')
       .data(filteredData)
       .enter()
       .append('circle')
@@ -287,10 +305,38 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
       .style('fill', d => colorScale(ownerRanges.indexOf(d.estimated_owners)))
       .style('opacity', 0.5);
 
-    // Also update the zoomed scatter plot
-    const brushSelection = d3.brushSelection(svg.select('.brush').node() as any);
-    if (brushSelection) {
-      updateChart({ selection: brushSelection } as any);
-    }
+    updateCircles();
+  }
+
+  function updateCircles() {
+    circlesGroup.selectAll('circle').transition().duration(500)
+      // @ts-expect-error
+      .style('opacity', (d: ScatterPlotData)=> {
+        if (!activeLegend) {
+          return 0.5;
+        }
+        return d.estimated_owners === activeLegend ? 1 : 0.1;
+      });
+
+    // Update the legend opacity
+    legend.selectAll('rect').transition().duration(500)
+      // @ts-expect-error
+      .style('opacity', (d: string) => {
+        if (!activeLegend) {
+          return 1;
+        }
+        return d === activeLegend ? 1 : 0.01;
+      });
+
+    // Update the zoomed circles
+    const zoomSvg = d3.select('#zoom-container');
+    zoomSvg.selectAll('circle').transition().duration(500)
+      // @ts-expect-error
+      .style('opacity', (d: ScatterPlotData) => {
+        if (!activeLegend) {
+          return 0.5;
+        }
+        return d.estimated_owners === activeLegend ? 1 : 0.1;
+      });
   }
 };
