@@ -65,7 +65,7 @@ module.exports = (env, argv) => ({
     }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(argv.mode || 'development'),
-      'process.env.DATA_URL': JSON.stringify(argv.mode === 'production' ? 'https://whats2000.github.io/SteamVisualization/data/' : '../data/')
+      'process.env.DATA_URL': JSON.stringify(argv.mode === 'production' ? '../SteamVisualization/data/' : '../data/')
     }),
   ],
 });
