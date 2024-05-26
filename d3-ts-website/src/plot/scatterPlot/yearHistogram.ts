@@ -36,6 +36,10 @@ export const createYearHistogram = (data: ScatterPlotData[], minYear: number, ma
     x.domain(xDomain);
     y.domain([0, d3.max(bins, d => d.length) as number]);
 
+    // Define color scale
+    const colorScale = d3.scaleSequential(d3.interpolateBlues)
+      .domain([0, d3.max(bins, d => d.length) as number]);
+
     svg.selectAll('rect').remove();
     svg.selectAll('.trendline').remove();
 
@@ -48,7 +52,7 @@ export const createYearHistogram = (data: ScatterPlotData[], minYear: number, ma
       .attr('y', d => y(d.length))
       .attr('width', d => x(d.x1 as Date) - x(d.x0 as Date) - 1)
       .attr('height', d => height - y(d.length))
-      .style('fill', '#69b3a2');
+      .style('fill', d => colorScale(d.length));
 
     // Add the trend line
     const trendlineData = bins.map(d => ({ date: (d.x0 as Date), value: d.length }));
@@ -106,7 +110,7 @@ export const createYearHistogram = (data: ScatterPlotData[], minYear: number, ma
 
     const brush = d3.brushX()
       .extent([[0, 0], [width, height]])
-      .on('end', brushed);
+      .on('brush end', brushed);
 
     svg.select('.brush').remove();
     svg.append('g')
@@ -139,7 +143,6 @@ export const createYearHistogram = (data: ScatterPlotData[], minYear: number, ma
     .on('click', () => {
       binType = binType === 'yearly' ? 'monthly' : 'yearly';
       toggle.text(binType === 'yearly' ? 'Switch to Monthly' : 'Switch to Yearly');
-      updateYearFilter([minYear, maxYear])
       updateHistogram();
     });
 
