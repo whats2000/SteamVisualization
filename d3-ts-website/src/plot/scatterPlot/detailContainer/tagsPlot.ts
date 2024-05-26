@@ -25,8 +25,6 @@ export const createTagsPlot = (gameDetails: GameData) => {
     count: value
   }));
 
-  console.log(tagsData);
-
   // Set the scales
   const x = d3.scaleBand()
     .domain(tagsData.map(d => d.tag))

@@ -1,4 +1,10 @@
-import { ScatterPlotData, TimelinePlotData, SteamDataLoader, GameDataDictionary, GameData } from '../types';
+import {
+  ScatterPlotData,
+  TimelinePlotData,
+  SteamDataLoader,
+  GameData,
+  GameRecommendation,
+} from '../types';
 import { SpinnerProgress } from './spinnerProgress';
 
 export class SteamDataFromDatabase implements SteamDataLoader {
@@ -44,4 +50,17 @@ export class SteamDataFromDatabase implements SteamDataLoader {
     }
     return response.json();
   }
+
+  public getRecentlyRecommendation = async (gameId: string): Promise<GameRecommendation | false> => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/game_recommendations/${gameId}`);
+      if (!response.ok) {
+        return false;
+      }
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  };
 }

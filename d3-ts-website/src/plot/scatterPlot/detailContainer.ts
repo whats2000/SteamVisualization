@@ -1,6 +1,7 @@
 import { ScatterPlotData, SteamDataLoader, GameData } from '../../types';
 import { createReviewsPlot } from './detailContainer/reviewsPlot';
 import { createTagsPlot } from './detailContainer/tagsPlot';
+import { createRecommendationPlot } from './detailContainer/recommendationPlot';
 
 export const createDetailContainer = async (d: ScatterPlotData, dataLoader: SteamDataLoader) => {
   const detailsContainer = document.getElementById('details-container');
@@ -28,10 +29,6 @@ export const createDetailContainer = async (d: ScatterPlotData, dataLoader: Stea
           <div class="col-12">
             <p class="loading">Loading additional details...</p>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-12 col-xl-6 d-flex justify-content-center" id="reviews-plot-container"></div>
-          <div class="col-12 col-xl-6 d-flex justify-content-center" id="tags-plot-container"></div>
         </div>
       </div>
     `;
@@ -70,6 +67,14 @@ export const createDetailContainer = async (d: ScatterPlotData, dataLoader: Stea
             <p><strong>Supported Languages:</strong> ${gameDetails.supported_languages.join(', ')}</p>
           </div>
         </div>
+        <div class="row">
+          <div class="col-12 col-xl-6 d-flex justify-content-center mb-5" id="reviews-plot-container"></div>
+          <div class="col-12 col-xl-6 d-flex justify-content-center mb-5" id="tags-plot-container"></div>
+        </div>
+        <div class="row mb-5">
+            <div class="col-12 col-xl-6 d-flex justify-content-center" id="recommendations-plot-container"></div>
+            <div class="col-12 col-xl-6 d-flex justify-content-center" id="recommendations-plot-container-2"></div>
+        </div>
       `;
 
       // Create reviews plot
@@ -77,6 +82,9 @@ export const createDetailContainer = async (d: ScatterPlotData, dataLoader: Stea
 
       // Add tags plot
       createTagsPlot(gameDetails);
+
+      // Add recommendations plot
+      await createRecommendationPlot(dataLoader, d.game_id);
 
     } catch (error) {
       detailsContainer.innerHTML += `
