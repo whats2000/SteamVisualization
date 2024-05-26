@@ -2,7 +2,6 @@ import * as d3 from 'd3';
 import { ScatterPlotData, SteamDataLoader } from '../types';
 import { createYearHistogram } from './scatterPlot/yearHistogram';
 import { createDetailContainer } from './scatterPlot/detailContainer';
-import { addSearchFunctionality } from './scatterPlot/functionality/search';
 
 export const createScatterPlot = (dataLoader: SteamDataLoader) => {
   const data = dataLoader.getScatterPlotData();
@@ -286,10 +285,15 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
     updateZoomCircles(zoomedCircles);
   }
 
+  // Add histogram for game release years
+  createYearHistogram(data, minYear, maxYear, updateYearFilter);
+
   function updateYearFilter([newMinYear, newMaxYear]: [number, number]) {
+    const searchText = (document.getElementById('search-game') as HTMLInputElement).value.toLowerCase();
+
     filteredData = data.filter(d => {
       const year = new Date(d.release_date).getFullYear();
-      return d.peak_ccu > 0 && year >= newMinYear && year <= newMaxYear;
+      return d.peak_ccu > 0 && year >= newMinYear && year <= newMaxYear && d.name.toLowerCase().includes(searchText);
     });
 
     circlesGroup.selectAll('circle').remove();
@@ -353,14 +357,19 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
 
   updateZoomPlot();
 
-  // Add histogram for game release years
-  createYearHistogram(data, minYear, maxYear, updateYearFilter);
-
   // Add search functionality
-  addSearchFunctionality(data, filteredData, () => {
+  const searchInput = document.getElementById('search-game') as HTMLInputElement;
+  searchInput.addEventListener('input', function () {
+    const searchText = searchInput.value.toLowerCase();
+
+    filteredData = data.filter(d => {
+      const year = new Date(d.release_date).getFullYear();
+      return d.peak_ccu > 0 && year >= minYear && year <= maxYear && d.name.toLowerCase().includes(searchText);
+    });
+
     circlesGroup.selectAll('circle').remove();
     resetCircleGroup(circlesGroup);
     updateCircles(circlesGroup);
     updateZoomPlot();
-  }, minYear, maxYear);
+  });
 };
