@@ -30,8 +30,8 @@ export const createDetailContainer = async (d: ScatterPlotData, dataLoader: Stea
           </div>
         </div>
         <div class="row">
-          <div class="col-6" id="reviews-plot-container"></div>
-          <div class="col-6" id="tags-plot-container"></div>
+          <div class="col-12 col-xl-6 d-flex justify-content-center" id="reviews-plot-container"></div>
+          <div class="col-12 col-xl-6 d-flex justify-content-center" id="tags-plot-container"></div>
         </div>
       </div>
     `;
@@ -45,22 +45,22 @@ export const createDetailContainer = async (d: ScatterPlotData, dataLoader: Stea
       // Append the remaining details once loaded
       detailsContainer.innerHTML += `
         <div class="row mt-2">
-          <div class="col-6">
+          <div class="col-12 col-xl-6">
             <p><strong>Developers:</strong> ${gameDetails.developers.join(', ')}</p>
             <p><strong>Publishers:</strong> ${gameDetails.publishers.join(', ')}</p>
             <p><strong>Genres:</strong> ${gameDetails.genres.join(', ')}</p>
           </div>
-          <div class="col-6">
+          <div class="col-12 col-xl-6">
             <p><strong>Categories:</strong> ${gameDetails.categories.join(', ')}</p>
             <p><strong>Metacritic Score:</strong> ${gameDetails.metacritic_score}</p>
             <p><strong>User Score:</strong> ${gameDetails.user_score}</p>
           </div>
         </div>
         <div class="row">
-          <div class="col-6">
+          <div class="col-12 col-xl-6">
             <p><strong>Positive Reviews:</strong> ${gameDetails.positive}</p>
           </div>
-          <div class="col-6">
+          <div class="col-12 col-xl-6">
             <p><strong>Negative Reviews:</strong> ${gameDetails.negative}</p>
           </div>
         </div>
