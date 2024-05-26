@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import { ScatterPlotData, SteamDataLoader } from '../types';
 import { createYearHistogram } from './scatterPlot/yearHistogram';
 import { createDetailContainer } from './scatterPlot/detailContainer';
+import { addSearchFunctionality } from './scatterPlot/functionality/search';
 
 export const createScatterPlot = (dataLoader: SteamDataLoader) => {
   const data = dataLoader.getScatterPlotData();
@@ -285,9 +286,6 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
     updateZoomCircles(zoomedCircles);
   }
 
-  // Add histogram for game release years
-  createYearHistogram(data, minYear, maxYear, updateYearFilter);
-
   function updateYearFilter([newMinYear, newMaxYear]: [number, number]) {
     filteredData = data.filter(d => {
       const year = new Date(d.release_date).getFullYear();
@@ -354,4 +352,15 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
   }
 
   updateZoomPlot();
+
+  // Add histogram for game release years
+  createYearHistogram(data, minYear, maxYear, updateYearFilter);
+
+  // Add search functionality
+  addSearchFunctionality(data, filteredData, () => {
+    circlesGroup.selectAll('circle').remove();
+    resetCircleGroup(circlesGroup);
+    updateCircles(circlesGroup);
+    updateZoomPlot();
+  }, minYear, maxYear);
 };

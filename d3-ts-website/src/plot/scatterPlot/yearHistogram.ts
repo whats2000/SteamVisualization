@@ -23,7 +23,7 @@ export const createYearHistogram = (data: ScatterPlotData[], minYear: number, ma
     const formatTime = binType === 'yearly' ? d3.timeFormat('%Y') : d3.timeFormat('%Y-%m');
     const xDomain: [Date, Date] = binType === 'yearly' ? [new Date(minYear, 0, 1), new Date(maxYear, 0, 1)] : [new Date(minYear, 0, 1), new Date(maxYear + 1, 0, 1)];
 
-    const histogram = d3.histogram<Date, Date>()
+    const histogram = d3.bin<Date, Date>()
       .value((d: Date) => d)
       .domain(xDomain)
       .thresholds(parseTime.range(...xDomain));
