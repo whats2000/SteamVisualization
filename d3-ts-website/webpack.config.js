@@ -14,19 +14,6 @@ module.exports = (env, argv) => ({
         exclude: /node_modules/,
       },
       {
-        test: /\.csv$/,
-        use: [
-          {
-            loader: 'csv-loader',
-            options: {
-              dynamicTyping: true,
-              header: true,
-              skipEmptyLines: true,
-            },
-          },
-        ],
-      },
-      {
         test: /\.json$/,
         type: 'javascript/auto',
         use: [
@@ -60,6 +47,7 @@ module.exports = (env, argv) => ({
       directory: path.join(__dirname, 'dist'),
     },
     open: true,
+    hot: true,
   },
   plugins: [
     new HtmlWebpackPlugin({

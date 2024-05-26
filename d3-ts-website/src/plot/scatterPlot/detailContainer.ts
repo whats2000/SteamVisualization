@@ -19,12 +19,13 @@ export const createDetailContainer = async (d: ScatterPlotData, dataLoader: Stea
             <img src="${d.header_image}" alt="${d.name}" class="img-fluid">
           </div>
         </div>
-        <div class="row">
+        <div class="row mb-5">
           <div class="col-12 text-center">
             <p><strong>Price:</strong> ${d.price}</p>
             <p><strong>Peak CCU:</strong> ${d.peak_ccu}</p>
             <p><strong>Estimated Owners:</strong> ${d.estimated_owners}</p>
             <p><strong>Release Date:</strong> ${d.release_date}</p>
+            <a class="link-light" href="https://store.steampowered.com/app/${d.game_id}" target="_blank" rel="noopener noreferrer">View on Steam</a>
           </div>
           <div class="col-12">
             <p class="loading">Loading additional details...</p>
