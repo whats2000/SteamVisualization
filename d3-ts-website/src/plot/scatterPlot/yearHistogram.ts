@@ -4,7 +4,7 @@ import { ScatterPlotData } from '../../types';
 export const createYearHistogram = (data: ScatterPlotData[], minYear: number, maxYear: number, updateYearFilter: (years: [number, number]) => void) => {
   const margin = { top: 40, right: 30, bottom: 50, left: 50 };
   const width = 1200 - margin.left - margin.right;
-  const height = 200 - margin.top - margin.bottom;
+  const height = 250 - margin.top - margin.bottom;
 
   let binType: 'yearly' | 'monthly' = 'yearly';
 
@@ -144,6 +144,7 @@ export const createYearHistogram = (data: ScatterPlotData[], minYear: number, ma
       binType = binType === 'yearly' ? 'monthly' : 'yearly';
       toggle.text(binType === 'yearly' ? 'Switch to Monthly' : 'Switch to Yearly');
       updateHistogram();
+      updateYearFilter([minYear, maxYear]);
     });
 
   updateHistogram();

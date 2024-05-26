@@ -56,13 +56,13 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
   const x = d3.scaleSymlog()
     .domain([
       d3.min(filteredData, d => d.price) as number,
-      d3.max(filteredData, d => d.price) as number
+      d3.max(filteredData, d => d.price) as number,
     ]).range([0, width]);
 
   const y = d3.scaleSymlog()
     .domain([
       d3.min(filteredData, d => d.peak_ccu) as number,
-      d3.max(filteredData, d => d.peak_ccu) as number]
+      d3.max(filteredData, d => d.peak_ccu) as number],
     ).range([height, 0]);
 
   // Define color scale with a sequential color scheme
@@ -82,15 +82,21 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
   // Add X axis
   svg.append('g')
     .attr('transform', `translate(0,${height})`)
-    .call(d3.axisBottom(x).ticks(10, d3.format('~g')))
+    .call(d3.axisBottom(x).ticks(10))
     .selectAll('text')
-    .style('fill', 'white');
+    .style('fill', 'white')
+    .style('text-anchor', 'end')
+    .attr('dx', '-0.8em')
+    .attr('dy', '0.15em')
+    .attr('font-size', '8px')
+    .attr('transform', 'rotate(-65)');
 
   // Add Y axis
   svg.append('g')
     .call(d3.axisLeft(y).ticks(10, d3.format('~g')))
     .selectAll('text')
-    .style('fill', 'white');
+    .style('fill', 'white')
+    .attr('font-size', '8px');
 
   // Add dots without interactivity on the original plot
   const circlesGroup = svg.append('g');
@@ -264,15 +270,21 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
     // Add zoomed X axis
     zoomSvgGroup.append('g')
       .attr('transform', `translate(0,${height})`)
-      .call(d3.axisBottom(xZoom).ticks(10, d3.format('~g')))
+      .call(d3.axisBottom(x).ticks(10))
       .selectAll('text')
-      .style('fill', 'white');
+      .style('fill', 'white')
+      .style('text-anchor', 'end')
+      .attr('dx', '-0.8em')
+      .attr('dy', '0.15em')
+      .attr('font-size', '8px')
+      .attr('transform', 'rotate(-65)');
 
     // Add zoomed Y axis
     zoomSvgGroup.append('g')
       .call(d3.axisLeft(yZoom).ticks(10, d3.format('~g')))
       .selectAll('text')
-      .style('fill', 'white');
+      .style('fill', 'white')
+      .attr('font-size', '8px');
 
     updateZoomCircles(zoomedCircles);
   }
