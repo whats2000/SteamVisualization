@@ -37,10 +37,10 @@ const init = async () => {
   try {
     const isDatabaseOnline = await checkDatabaseConnection();
     const dataLoader = isDatabaseOnline ? new SteamDataFromDatabase() : new SteamDataFromJson();
-    const scatterPlotData = await dataLoader.loadScatterPlotData();
+    await dataLoader.loadScatterPlotData();
 
     // Scatter plot
-    createScatterPlot(scatterPlotData);
+    createScatterPlot(dataLoader);
 
     // Below data will not be loaded if the database is offline
     if (!isDatabaseOnline) return;

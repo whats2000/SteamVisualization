@@ -1,5 +1,20 @@
-import { GameData } from "./gameData";
+import { ScatterPlotData } from './scatterPlotData';
+import { GameData } from './gameData';
 
 type SteamDataLoader = {
-  loadScatterPlotData(): Promise<GameData[]> | Promise<Partial<GameData>[]>;
+  /**
+   * Load scatter plot data from the database
+   */
+  loadScatterPlotData(): void;
+
+  /**
+   * Get scatter plot data
+   */
+  getScatterPlotData(): ScatterPlotData[];
+
+  /**
+   * Load game details from the database
+   * @param gameId - the game ID
+   */
+  loadGameDetails(gameId: string): Promise<GameData>;
 }

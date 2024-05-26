@@ -15,6 +15,7 @@ export interface Tags {
 }
 
 export interface GameData {
+  game_id: string;
   name: string;
   release_date: string;
   required_age: number;

@@ -1,8 +1,11 @@
 import * as d3 from 'd3';
-import { ScatterPlotData } from '../types';
+import { ScatterPlotData, SteamDataLoader } from '../types';
 import { createYearHistogram } from './scatterPlot/yearHistogram';
+import { createDetailContainer } from './scatterPlot/detailContainer';
 
-export const createScatterPlot = (data: ScatterPlotData[]) => {
+export const createScatterPlot = (dataLoader: SteamDataLoader) => {
+  const data = dataLoader.getScatterPlotData();
+
   // Set up the year filter
   const years = data.map(d => new Date(d.release_date).getFullYear());
   const minYear = d3.min(years) as number;
@@ -240,7 +243,7 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
             (d: ScatterPlotData) => colorScale(ownerRanges.indexOf(d.estimated_owners))),
           );
       })
-      .on('click', function(_event, d) {
+      .on('click', async function(_event, d) {
         if (selectedPoint) {
           d3.select(this)
             .style('fill', colorScale(ownerRanges.indexOf(selectedPoint.estimated_owners)))
@@ -255,20 +258,7 @@ export const createScatterPlot = (data: ScatterPlotData[]) => {
           );
         d3.select(this).attr('r', 7).style('opacity', 1);
 
-        // Update details container with selected game details
-        const detailsContainer = document.getElementById('details-container') as HTMLElement;
-        detailsContainer.classList.add('visible');
-
-        if (detailsContainer) {
-          detailsContainer.innerHTML = `
-            <h3>${d.name}</h3>
-            <img src="${d.header_image}" alt="${d.name}" style="max-width: 100%; height: auto;">
-            <p>Price: ${d.price}</p>
-            <p>Peak CCU: ${d.peak_ccu}</p>
-            <p>Estimated Owners: ${d.estimated_owners}</p>
-            <p>Release Date: ${d.release_date}</p>
-          `;
-        }
+        await createDetailContainer(d, dataLoader);
       });
 
     // Add zoomed X axis

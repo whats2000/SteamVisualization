@@ -1,8 +1,10 @@
-import { ScatterPlotData, TimelinePlotData, SteamDataLoader } from '../types';
+import { ScatterPlotData, TimelinePlotData, SteamDataLoader, GameDataDictionary, GameData } from '../types';
 import { SpinnerProgress } from './spinnerProgress';
 
 export class SteamDataFromDatabase implements SteamDataLoader {
-  async loadScatterPlotData(): Promise<ScatterPlotData[]> {
+  private loadedScatterPlotData: ScatterPlotData[] = [];
+
+  async loadScatterPlotData() {
     // Update percentage of progress bar every 0.2 seconds until 99%
     let percentage = 0;
 
@@ -19,8 +21,21 @@ export class SteamDataFromDatabase implements SteamDataLoader {
     if (!response.ok) {
       throw new Error('Failed to fetch data from database');
     }
-    return response.json();
+
+    this.loadedScatterPlotData = await response.json();
   }
+
+  public getScatterPlotData(): ScatterPlotData[] {
+    return this.loadedScatterPlotData;
+  }
+
+  public loadGameDetails = async (gameId: string): Promise<GameData> => {
+    const response = await fetch(`http://localhost:5000/api/game_details/${gameId}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch game details from database');
+    }
+    return response.json();
+  };
 
   async loadTimelineData(): Promise<TimelinePlotData[]> {
     const response = await fetch('http://localhost:5000/api/game_timeline');

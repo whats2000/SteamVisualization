@@ -1,12 +1,13 @@
-import { GameDataDictionary, SteamDataLoader, ScatterPlotData } from '../types';
+import { GameDataDictionary, SteamDataLoader, ScatterPlotData, GameData } from '../types';
 import { SpinnerProgress } from './spinnerProgress';
 
 export class SteamDataFromJson implements SteamDataLoader {
   private loadedChunks = 0;
   private totalChunks = 9;
+  private loadedScatterPlotData: ScatterPlotData[] = [];
+  private loadedGameData: GameDataDictionary = {};
 
-  constructor(private maxChunks = 9) {
-  }
+  constructor(private maxChunks = 9) {}
 
   private loadScatterPlotDataChunk = async (chunkNumber: number): Promise<ScatterPlotData[]> => {
     const response = await fetch(`../../data/chunk_${chunkNumber}.json`);
@@ -14,36 +15,53 @@ export class SteamDataFromJson implements SteamDataLoader {
       throw new Error(`Failed to load chunk ${chunkNumber}`);
     }
     const data: GameDataDictionary = await response.json();
-    return Object.values(data).map((
-      {
-        name,
-        release_date,
-        price,
-        peak_ccu,
-        header_image,
-        estimated_owners,
-      }) => ({
-      name,
-      release_date,
-      price,
-      peak_ccu,
-      header_image,
-      estimated_owners,
+
+    this.loadedGameData = { ...this.loadedGameData, ...data };
+
+    return Object.entries(data).map(([game_id, gameData]) => ({
+      game_id,
+      name: gameData.name,
+      release_date: gameData.release_date,
+      price: gameData.price,
+      peak_ccu: gameData.peak_ccu,
+      header_image: gameData.header_image,
+      estimated_owners: gameData.estimated_owners,
     }));
   };
 
-  public loadScatterPlotData = async (): Promise<ScatterPlotData[]> => {
+  public loadScatterPlotData = async () => {
+    this.loadedScatterPlotData = [];
+    this.loadedGameData = {};
+
     const dataPromises: Promise<ScatterPlotData[]>[] = [];
     for (let i = 0; i < this.totalChunks; i++) {
       if (i > this.maxChunks) break;
 
-      dataPromises.push(this.loadScatterPlotDataChunk(i).then((data) => {
-        this.loadedChunks++;
-        SpinnerProgress.updateProgressBar((this.loadedChunks / this.totalChunks) * 100);
-        return data;
-      }));
+      dataPromises.push(
+        this.loadScatterPlotDataChunk(i).then((data) => {
+          this.loadedChunks++;
+          SpinnerProgress.updateProgressBar((this.loadedChunks / this.totalChunks) * 100);
+          return data;
+        })
+      );
     }
     const dataArrays = await Promise.all(dataPromises);
-    return dataArrays.flat();
+    this.loadedScatterPlotData = dataArrays.flat();
+  };
+
+  public getScatterPlotData = (): ScatterPlotData[] => {
+    return this.loadedScatterPlotData;
+  }
+
+  public loadTimelineData = async (): Promise<GameData[]> => {
+    return Object.values(this.loadedGameData);
+  };
+
+  public loadGameDetails = async (gameId: string): Promise<GameData> => {
+    const gameData = this.loadedGameData[gameId];
+    if (!gameData) {
+      throw new Error(`Game data for ID ${gameId} not found`);
+    }
+    return gameData;
   };
 }

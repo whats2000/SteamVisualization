@@ -1,4 +1,5 @@
 export type ScatterPlotData = {
+  game_id: string;
   name: string;
   price: number;
   peak_ccu: number;
