@@ -270,7 +270,7 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
     // Add zoomed X axis
     zoomSvgGroup.append('g')
       .attr('transform', `translate(0,${height})`)
-      .call(d3.axisBottom(x).ticks(10))
+      .call(d3.axisBottom(xZoom).ticks(10))
       .selectAll('text')
       .style('fill', 'white')
       .style('text-anchor', 'end')
