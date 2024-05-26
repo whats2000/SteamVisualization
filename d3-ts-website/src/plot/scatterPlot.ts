@@ -33,10 +33,6 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
 
   let currentBrushExtent: [[number, number], [number, number]] = [[0, 0], [width, height]];
 
-  // Remove any existing SVG elements
-  d3.select('#visualization-container').select('svg').remove();
-  d3.select('#visualization-container-2').select('svg').remove();
-
   // Append SVG and group elements
   const svg = d3.select('#visualization-container')
     .append('svg')

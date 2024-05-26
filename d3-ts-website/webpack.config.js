@@ -2,6 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpack = require('webpack');
 
 module.exports = (env, argv) => ({
   entry: './src/index.ts',
@@ -61,6 +62,10 @@ module.exports = (env, argv) => ({
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css',
+    }),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(argv.mode || 'development'),
+      'process.env.DATA_URL': JSON.stringify(argv.mode === 'production' ? 'https://whats2000.github.io/SteamVisualization/data/' : '../data/')
     }),
   ],
 });

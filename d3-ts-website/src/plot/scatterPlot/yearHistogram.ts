@@ -8,9 +8,6 @@ export const createYearHistogram = (data: ScatterPlotData[], minYear: number, ma
 
   let binType: 'yearly' | 'monthly' = 'yearly';
 
-  // Clear the container
-  d3.select('#visualization-year-filter').selectAll('*').remove();
-
   const svg = d3.select('#visualization-year-filter')
     .append('svg')
     .attr('width', width + margin.left + margin.right)

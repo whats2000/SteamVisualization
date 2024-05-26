@@ -8,9 +8,6 @@ export const createTagsPlot = (gameDetails: GameData) => {
   const width = 600 - margin.left - margin.right;
   const height = 400 - margin.top - margin.bottom;
 
-  // Clear the container
-  d3.select('#tags-plot-container').selectAll('*').remove();
-
   // Append SVG and group elements
   const svg = d3.select('#tags-plot-container')
     .append('svg')

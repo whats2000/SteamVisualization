@@ -14,10 +14,6 @@ export const createRecommendationPlot = async (dataLoader: SteamDataLoader, game
   const width = 1100 - margin.left - margin.right;
   const height = 300 - margin.top - margin.bottom;
 
-  // Clear the existing plots
-  d3.select('#recommendations-plot-container').selectAll('*').remove();
-  d3.select('#recommendations-plot-container-2').selectAll('*').remove();
-
   // Create the first plot for overall recommendations
   createPlot('#recommendations-plot-container', recommendationData.results.rollups, 'Overall Recommendations', margin, width / 2, height);
 

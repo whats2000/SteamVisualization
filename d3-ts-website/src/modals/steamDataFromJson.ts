@@ -13,27 +13,20 @@ export class SteamDataFromJson implements SteamDataLoader {
   };
 
   private loadScatterPlotDataChunk = async (chunkNumber: number): Promise<ScatterPlotData[]> => {
+    const baseUrl = process.env.DATA_URL;
     let data: GameDataDictionary;
     try {
-      let response = await fetch(`../data/chunk_${chunkNumber}.json`);
+      let response = await fetch(`${baseUrl}chunk_${chunkNumber}.json`);
       if (!response.ok) {
-        response = await fetch(`https://whats2000.github.io/SteamVisualization/data/chunk_${chunkNumber}.json`);
-      }
-
-      if (!response.ok) {
+        console.error(`Failed to load chunk data from ${baseUrl}`);
         return [];
       }
 
-      console.log('Using local data');
+      console.log(`Using data from ${baseUrl}`);
       data = await response.json();
     } catch (error) {
-      const response = await fetch(`https://whats2000.github.io/SteamVisualization/data/chunk_${chunkNumber}.json`);
-      if (!response.ok) {
-        throw new Error(`Failed to load chunk ${chunkNumber}`);
-      }
-
-      console.log('Using remote data');
-      data = await response.json();
+      console.error('Failed to load chunk data:', error);
+      return [];
     }
 
     this.loadedGameData = { ...this.loadedGameData, ...data };
