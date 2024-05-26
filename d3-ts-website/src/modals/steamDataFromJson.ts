@@ -10,7 +10,7 @@ export class SteamDataFromJson implements SteamDataLoader {
   constructor(private maxChunks = 9) {}
 
   private loadScatterPlotDataChunk = async (chunkNumber: number): Promise<ScatterPlotData[]> => {
-    const response = await fetch(`../../data/chunk_${chunkNumber}.json`);
+    const response = await fetch(`https://whats2000.github.io/SteamVisualization/data/chunk_${chunkNumber}.json`);
     if (!response.ok) {
       throw new Error(`Failed to load chunk ${chunkNumber}`);
     }
