@@ -25,13 +25,14 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
   let currentMinYear = minYear;
   let currentMaxYear = maxYear;
   let currentScaleType = 'symlog';
+  let hasShownAlert = false;
 
   // Set dimensions and margins for the plot
   const margin = { top: 20, right: 150, bottom: 50, left: 60 };
   const width = 650 - margin.left - margin.right;
   const height = 500 - margin.top - margin.bottom;
 
-  let currentBrushExtent: [[number, number], [number, number]] = [[0, 0], [width, height]];
+  let currentBrushExtent: [[number, number], [number, number]] = [[-10, -10], [-10, -10]];
 
   // Append SVG and group elements
   const svg = d3.select('#visualization-container')
@@ -222,24 +223,22 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
   function updateZoomPlot() {
     const [[x0, y0], [x1, y1]] = currentBrushExtent;
 
-    console.log('x0:', x0, 'x1:', x1, 'y0:', y0, 'y1:', y1);
-
     // Create new scales for a zoomed region
     const xZoom = currentScaleType === 'linear' ?
       d3.scaleLinear()
-      .domain([x.invert(x0), x.invert(x1)])
-      .range([0, width]) :
+        .domain([x.invert(x0), x.invert(x1)])
+        .range([0, width]) :
       d3.scaleSymlog()
-      .domain([x.invert(x0), x.invert(x1)])
-      .range([0, width]);
+        .domain([x.invert(x0), x.invert(x1)])
+        .range([0, width]);
 
     const yZoom = currentScaleType === 'linear' ?
       d3.scaleLinear()
-      .domain([y.invert(y1), y.invert(y0)])
-      .range([height, 0]) :
+        .domain([y.invert(y1), y.invert(y0)])
+        .range([height, 0]) :
       d3.scaleSymlog()
-      .domain([y.invert(y1), y.invert(y0)])
-      .range([height, 0]);
+        .domain([y.invert(y1), y.invert(y0)])
+        .range([height, 0]);
 
     // Remove existing zoomed svg
     d3.select('#zoom-container').select('g').remove();
@@ -249,15 +248,37 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
+    const zoomedData = filteredData.filter(d =>
+      x(d.price) >= x0 &&
+      x(d.price) <= x1 &&
+      y(d.peak_ccu) >= y0 &&
+      y(d.peak_ccu) <= y1,
+    );
+
+    // Show a bootstrap info alert if there is no data in the zoomed area
+    if (zoomedData.length === 0 && !hasShownAlert) {
+      hasShownAlert = true;
+      d3.select('#visualization-container-2')
+        .append('div')
+        .attr('id', 'no-data-alert')
+        .attr('class', 'border rounded-5 p-5 position-absolute top-50 start-50 translate-middle')
+        .html(`
+          <h4 class="alert-heading">No data captured</h4>
+          <p>Please use the brush tool on the left plot to select an area to zoom in.</p>
+        `);
+      return;
+    } else if (zoomedData.length > 0) {
+      const alert = document.getElementById('no-data-alert');
+      if (alert) {
+        alert.classList.add('fade-out');
+        setTimeout(() => alert.remove(), 1000);
+      }
+    }
+
     // Add zoomed dots
     const zoomedCircles = zoomSvgGroup.append('g')
       .selectAll('circle')
-      .data(filteredData.filter(d =>
-        x(d.price) >= x0 &&
-        x(d.price) <= x1 &&
-        y(d.peak_ccu) >= y0 &&
-        y(d.peak_ccu) <= y1),
-      ).enter()
+      .data(zoomedData).enter()
       .append('circle')
       .attr('cx', d => xZoom(d.price as number))
       .attr('cy', d => yZoom(d.peak_ccu as number))
@@ -493,4 +514,6 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
 
     updatePlot();
   }
+
+  updatePlot();
 };

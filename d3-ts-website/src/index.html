@@ -30,6 +30,25 @@
 
   <link rel="icon" href="https://store.steampowered.com/favicon.ico" type="image/x-icon">
   <style>
+      .fade-out {
+          animation: fadeOut 1s forwards;
+      }
+
+      @keyframes fadeOut {
+          to {
+              opacity: 0;
+              visibility: hidden;
+          }
+      }
+
+      .alert-container {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 10;
+      }
+
       body {
           min-height: 100vh;
           background-color: #1b2838 !important;
@@ -180,10 +199,12 @@
     </div>
   </div>
 </header>
-<div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasFilter" aria-labelledby="offcanvasFilterLabel">
+<div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasFilter"
+     aria-labelledby="offcanvasFilterLabel">
   <div class="offcanvas-header">
     <h5 class="offcanvas-title" id="offcanvasLabel">Data Filter</h5>
-    <button type="button" class="btn-close shadow-none" id="offcanvasFilterClose" aria-labelledby="offcanvasLabel"></button>
+    <button type="button" class="btn-close shadow-none" id="offcanvasFilterClose"
+            aria-labelledby="offcanvasLabel"></button>
   </div>
   <div class="offcanvas-body">
     Not implemented yet.
@@ -203,7 +224,8 @@
   </div>
   <div class="row justify-content-center">
     <div class="col p-0 position-relative" id="visualization-container">
-      <div class="btn-group btn-group-toggle position-absolute end-0 bottom-0" data-bs-toggle="buttons" id="toggle-scale">
+      <div class="btn-group btn-group-toggle position-absolute end-0 bottom-0" data-bs-toggle="buttons"
+           id="toggle-scale">
         <input type="radio" class="btn-check" name="toggle-scale" id="linear" autocomplete="off">
         <label class="btn btn-outline-light btn-sm" for="linear">Linear</label>
 
@@ -211,7 +233,8 @@
         <label class="btn btn-outline-light btn-sm" for="symlog">Symlog</label>
       </div>
     </div>
-    <div class="col p-0" id="visualization-container-2"></div>
+    <div class="col p-0 position-relative" id="visualization-container-2">
+    </div>
   </div>
   <div class="container" id="details-container"></div>
 </main>
