@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import { ScatterPlotData } from '../../types';
+import { SpinnerProgress } from '../../modals/spinnerProgress';
 
 export const createYearHistogram = (data: ScatterPlotData[], minYear: number, maxYear: number, updateYearFilter: (years: [number, number]) => void) => {
   const margin = { top: 40, right: 30, bottom: 50, left: 50 };
@@ -91,7 +92,7 @@ export const createYearHistogram = (data: ScatterPlotData[], minYear: number, ma
       .attr('y', height + margin.bottom - 10)
       .style('text-anchor', 'middle')
       .style('fill', 'white')
-      .text(binType === 'yearly' ? 'Year' : 'Month');
+      .text(binType === 'yearly' ? 'Year (Brush to filter)' : 'Month (Brush to filter)');
 
     // Y label
     svg.select('.y-label').remove();

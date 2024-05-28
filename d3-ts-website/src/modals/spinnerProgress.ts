@@ -15,9 +15,9 @@ export class SpinnerProgress {
     spinner.style.display = 'none';
   };
 
-  static hideProgressBar = () => {
-    const progressBar = document.getElementById('loading-container') as HTMLElement;
-    progressBar.style.display = 'none';
+  static hideLoadingContainer = () => {
+    const loadingContainer = document.getElementById('loading-container') as HTMLElement;
+    loadingContainer.style.display = 'none';
   };
 
   static showVisualization = () => {

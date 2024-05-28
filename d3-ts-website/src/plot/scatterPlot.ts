@@ -123,10 +123,17 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
     .text('Peak CCU (Symlog Scale)')
     .style('fill', 'white');
 
-  // Add color legend
+  // Add color legend with title
   const legend = svg.append('g')
     .attr('class', 'legend')
-    .attr('transform', `translate(${width + 20}, 0)`);
+    .attr('transform', `translate(${width + 5}, 20)`);
+
+  legend.append('text')
+    .attr('x', 0)
+    .attr('y', -10)
+    .style('fill', 'white')
+    .style('font-weight', 'bold')
+    .text('Estimated Owners');
 
   legend.selectAll('rect')
     .data(ownerRanges)
@@ -150,13 +157,14 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
       updateCircles(circlesGroup);
     });
 
-  legend.selectAll('text')
+  legend.selectAll('text.legend-label')
     .data(ownerRanges)
     .enter()
     .append('text')
     .attr('x', 24)
     .attr('y', (_d, i) => i * 20 + 9)
     .attr('dy', '.35em')
+    .attr('class', 'legend-label')
     .style('fill', 'white')
     .text(d => {
       const range = d.split(' - ').map(value => {

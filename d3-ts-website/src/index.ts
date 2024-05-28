@@ -53,7 +53,7 @@ const init = async () => {
     console.error('Error loading data:', error);
   } finally {
     SpinnerProgress.hideSpinner();
-    SpinnerProgress.hideProgressBar();
+    SpinnerProgress.hideLoadingContainer();
     SpinnerProgress.showVisualization();
   }
 };
