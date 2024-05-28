@@ -119,6 +119,16 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
     .text('Peak CCU (Symlog Scale)')
     .style('fill', 'white');
 
+  // Add title
+  svg.append('text')
+    .attr('x', width / 2)
+    .attr('y', margin.top - 10)
+    .attr('text-anchor', 'middle')
+    .style('fill', 'white')
+    .style('font-size', '16px')
+    .style('font-weight', 'bold')
+    .text('Peak CCU vs Price (Brush to Zoom)');
+
   // Add color legend with title
   const legend = svg.append('g')
     .attr('class', 'legend')
@@ -280,6 +290,16 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
       .selectAll('text')
       .style('fill', 'white')
       .attr('font-size', '12px');
+
+    // Add zoomed title
+    zoomSvgGroup.append('text')
+      .attr('x', width / 2)
+      .attr('y', margin.top - 10)
+      .attr('text-anchor', 'middle')
+      .style('fill', 'white')
+      .style('font-size', '16px')
+      .style('font-weight', 'bold')
+      .text('Zoomed Area (Click on a point for more details)');
 
     updateZoomCircles(zoomedCircles);
   }
