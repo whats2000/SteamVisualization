@@ -1,5 +1,6 @@
 {
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "@types/bootstrap": "^5.2.10"
   }
 }
