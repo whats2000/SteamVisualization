@@ -4,7 +4,7 @@ import { GameData } from '../../../types';
 // Function to create the tags plot
 export const createTagsPlot = (gameDetails: GameData) => {
   // Set dimensions and margins for the plot
-  const margin = { top: 40, right: 30, bottom: 100, left: 50 };
+  const margin = { top: 40, right: 90, bottom: 100, left: 50 };
   const width = 600 - margin.left - margin.right;
   const height = 400 - margin.top - margin.bottom;
 
@@ -91,7 +91,49 @@ export const createTagsPlot = (gameDetails: GameData) => {
     })
     .on('mouseout', function () {
       tooltip.transition().duration(500).style('opacity', 0);
-      (d3.select(this) as d3.Selection<any, {   tag: string;   count: number; }, null, undefined>)
+      (d3.select(this) as d3.Selection<any, { tag: string; count: number; }, null, undefined>)
         .style('fill', d => colorScale(d.count));
     });
+
+  // Legend
+  const legendHeight = 260;
+  const legendWidth = 20;
+
+  const legend = svg.append('g')
+    .attr('transform', `translate(${width + 10}, ${height - legendHeight})`);
+
+  const legendScale = d3.scaleLinear()
+    .domain(colorScale.domain())
+    .range([legendHeight, 0]);
+
+  const legendAxis = d3.axisRight(legendScale)
+    .ticks(5)
+    .tickSize(6)
+    .tickFormat(d3.format('.0f'));
+
+  legend.append('g')
+    .attr('transform', `translate(${legendWidth}, 0)`)
+    .call(legendAxis)
+    .selectAll('text')
+    .style('fill', 'white');
+
+  const legendGradient = svg.append('defs')
+    .append('linearGradient')
+    .attr('id', 'legend-gradient')
+    .attr('x1', '0%')
+    .attr('y1', '100%')
+    .attr('x2', '0%')
+    .attr('y2', '0%');
+
+  legendGradient.selectAll('stop')
+    .data(d3.range(0, 1.1, 0.1))
+    .enter()
+    .append('stop')
+    .attr('offset', d => d)
+    .attr('stop-color', d => colorScale(d * (colorScale.domain()[1] as number)));
+
+  legend.append('rect')
+    .attr('width', legendWidth)
+    .attr('height', legendHeight)
+    .style('fill', 'url(#legend-gradient)');
 };
