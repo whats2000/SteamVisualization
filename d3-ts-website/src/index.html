@@ -118,6 +118,27 @@
           background-color: #2a475e !important;
           border-radius: 5px;
       }
+
+      .offcanvas {
+          background-color: #1b2838 !important;
+          color: #c7d5e0 !important;
+      }
+
+      .offcanvas-header {
+          border-bottom: 1px solid #c7d5e0 !important;
+      }
+
+      .offcanvas-title {
+          color: #c7d5e0 !important;
+      }
+
+      .offcanvas-body {
+          background-color: #16202d !important;
+      }
+
+      .btn-close {
+          filter: invert(1);
+      }
   </style>
 </head>
 <body>
@@ -154,6 +175,15 @@
     </div>
   </div>
 </header>
+<div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasFilter" aria-labelledby="offcanvasFilterLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasLabel">Data Filter</h5>
+    <button type="button" class="btn-close shadow-none" id="offcanvasFilterClose" aria-labelledby="offcanvasLabel"></button>
+  </div>
+  <div class="offcanvas-body">
+    Not implemented yet.
+  </div>
+</div>
 <div id="loading-container">
   <div id="spinner" class="spinner-border text-primary" role="status"></div>
   <span>Loading...</span>

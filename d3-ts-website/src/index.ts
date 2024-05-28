@@ -1,3 +1,4 @@
+import { Offcanvas } from 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { SteamDataFromJson } from './modals/steamDataFromJson';
@@ -31,8 +32,31 @@ const checkDatabaseConnection = async (): Promise<boolean> => {
     });
 };
 
+const addFilterButtonEventListener = (filterOffcanvas: Offcanvas) => {
+  const filterButton = document.getElementById('filter-button');
+
+  if (filterButton) {
+    filterButton.addEventListener('click', () => {
+      filterOffcanvas.show();
+    });
+  }
+
+  const closeButton = document.getElementById('offcanvasFilterClose');
+
+  if (closeButton) {
+    closeButton.addEventListener('click', () => {
+      filterOffcanvas.hide();
+    });
+  }
+}
+
 const init = async () => {
   SpinnerProgress.showSpinner();
+
+  const filterOffcanvasElement = document.getElementById('offcanvasFilter') as HTMLElement;
+  const filterOffcanvas = new Offcanvas(filterOffcanvasElement);
+
+  addFilterButtonEventListener(filterOffcanvas);
 
   try {
     const isDatabaseOnline = await checkDatabaseConnection();
