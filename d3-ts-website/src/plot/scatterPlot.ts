@@ -24,6 +24,7 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
   let selectedPoint: ScatterPlotData | null = null;
   let currentMinYear = minYear;
   let currentMaxYear = maxYear;
+  let currentScaleType = 'symlog';
 
   // Set dimensions and margins for the plot
   const margin = { top: 20, right: 150, bottom: 50, left: 60 };
@@ -47,22 +48,57 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
     .append('g')
     .attr('transform', `translate(${margin.left},${margin.top})`);
 
-  // Set scales
-  const x = d3.scaleSymlog()
-    .domain([
-      d3.min(filteredData, d => d.price) as number,
-      d3.max(filteredData, d => d.price) as number,
-    ]).range([0, width]);
-
-  const y = d3.scaleSymlog()
-    .domain([
-      d3.min(filteredData, d => d.peak_ccu) as number,
-      d3.max(filteredData, d => d.peak_ccu) as number],
-    ).range([height, 0]);
-
   // Define color scale with a sequential color scheme
   const colorScale = d3.scaleSequential(d3.interpolatePlasma)
     .domain([0, ownerRanges.length - 1]);
+
+  let x: d3.ScaleLinear<number, number> | d3.ScaleSymLog<number, number> = d3.scaleSymlog()
+    .domain([
+      d3.min(filteredData, d => d.price) as number,
+      d3.max(filteredData, d => d.price) as number,
+    ])
+    .range([0, width]);
+  let y: d3.ScaleLinear<number, number> | d3.ScaleSymLog<number, number> = d3.scaleSymlog()
+    .domain([
+      d3.min(filteredData, d => d.peak_ccu) as number,
+      d3.max(filteredData, d => d.peak_ccu) as number,
+    ])
+    .range([height, 0]);
+
+  // Set the scales based on the selected scale type
+  const setScales = (scaleType: string) => {
+    if (scaleType === 'linear') {
+      x = d3.scaleLinear()
+        .domain([
+          d3.min(filteredData, d => d.price) as number,
+          d3.max(filteredData, d => d.price) as number,
+        ])
+        .range([0, width]);
+
+      y = d3.scaleLinear()
+        .domain([
+          d3.min(filteredData, d => d.peak_ccu) as number,
+          d3.max(filteredData, d => d.peak_ccu) as number,
+        ])
+        .range([height, 0]);
+    } else {
+      x = d3.scaleSymlog()
+        .domain([
+          d3.min(filteredData, d => d.price) as number,
+          d3.max(filteredData, d => d.price) as number,
+        ])
+        .range([0, width]);
+
+      y = d3.scaleSymlog()
+        .domain([
+          d3.min(filteredData, d => d.peak_ccu) as number,
+          d3.max(filteredData, d => d.peak_ccu) as number,
+        ])
+        .range([height, 0]);
+    }
+  };
+
+  setScales(currentScaleType);
 
   // Tooltip
   const tooltip = d3.select('body').append('div')
@@ -74,20 +110,7 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
     .style('border-radius', '5px')
     .style('box-shadow', '0 0 10px rgba(0,0,0,0.5)');
 
-  // Add X axis
-  svg.append('g')
-    .attr('transform', `translate(0,${height})`)
-    .call(d3.axisBottom(x).tickValues([0, 0.5, 1, 2, 3, 5, 7, 10, 15, 20, 30, 40, 60, 100, 150, 250]).ticks(20))
-    .selectAll('text')
-    .style('fill', 'white')
-    .attr('font-size', '12px');
-
-  // Add Y axis
-  svg.append('g')
-    .call(d3.axisLeft(y).tickValues([0, 2, 10, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000]).ticks(15, d3.format('~g')))
-    .selectAll('text')
-    .style('fill', 'white')
-    .attr('font-size', '12px');
+  setUpDefaultScale();
 
   // Add dots without interactivity on the original plot
   const circlesGroup = svg.append('g');
@@ -108,7 +131,8 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
     .attr('text-anchor', 'end')
     .attr('x', width)
     .attr('y', height + margin.top - 30)
-    .text('Price (Symlog Scale)')
+    .attr('id', 'x-axis-label')
+    .text(`Price (${currentScaleType.charAt(0).toUpperCase() + currentScaleType.slice(1)} Scale)`)
     .style('fill', 'white');
 
   svg.append('text')
@@ -116,7 +140,8 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
     .attr('transform', 'rotate(-90)')
     .attr('y', -margin.left + 80)
     .attr('x', -margin.top)
-    .text('Peak CCU (Symlog Scale)')
+    .attr('id', 'y-axis-label')
+    .text(`Peak CCU (${currentScaleType.charAt(0).toUpperCase() + currentScaleType.slice(1)} Scale)`)
     .style('fill', 'white');
 
   // Add title
@@ -197,12 +222,22 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
   function updateZoomPlot() {
     const [[x0, y0], [x1, y1]] = currentBrushExtent;
 
+    console.log('x0:', x0, 'x1:', x1, 'y0:', y0, 'y1:', y1);
+
     // Create new scales for a zoomed region
-    const xZoom = d3.scaleSymlog()
+    const xZoom = currentScaleType === 'linear' ?
+      d3.scaleLinear()
+      .domain([x.invert(x0), x.invert(x1)])
+      .range([0, width]) :
+      d3.scaleSymlog()
       .domain([x.invert(x0), x.invert(x1)])
       .range([0, width]);
 
-    const yZoom = d3.scaleSymlog()
+    const yZoom = currentScaleType === 'linear' ?
+      d3.scaleLinear()
+      .domain([y.invert(y1), y.invert(y0)])
+      .range([height, 0]) :
+      d3.scaleSymlog()
       .domain([y.invert(y1), y.invert(y0)])
       .range([height, 0]);
 
@@ -383,9 +418,79 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
     updateZoomPlot();
   }
 
-  updateZoomPlot();
-
   // Add search functionality
   const searchInput = document.getElementById('search-game') as HTMLInputElement;
   searchInput.addEventListener('input', updateFilteredData);
+
+  // Add scale toggle functionality
+  const linearScaleButton = document.getElementById('linear') as HTMLInputElement;
+  const symlogScaleButton = document.getElementById('symlog') as HTMLInputElement;
+
+  linearScaleButton?.addEventListener('change', () => {
+    if (linearScaleButton.checked) {
+      currentScaleType = 'linear';
+      updateScale();
+    }
+  });
+
+  symlogScaleButton?.addEventListener('change', () => {
+    if (symlogScaleButton.checked) {
+      currentScaleType = 'symlog';
+      updateScale();
+    }
+  });
+
+  function setUpDefaultScale() {
+    // Add X axis
+    svg.append('g')
+      .attr('class', 'x-axis')
+      .attr('transform', `translate(0,${height})`)
+      .call(d3.axisBottom(x).tickValues([0, 1, 2, 3, 5, 7, 10, 15, 20, 30, 40, 60, 100, 150, 250]).ticks(20))
+      .selectAll('text')
+      .style('fill', 'white')
+      .attr('font-size', '12px');
+
+    // Add Y axis
+    svg.append('g')
+      .attr('class', 'y-axis')
+      .call(d3.axisLeft(y)
+        .tickValues([0, 2, 10, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000]).ticks(15, d3.format('~g')))
+      .selectAll('text')
+      .style('fill', 'white')
+      .attr('font-size', '12px');
+  }
+
+  function updateScale() {
+    setScales(currentScaleType);
+
+    svg.selectAll('.x-axis').remove();
+    svg.selectAll('.y-axis').remove();
+
+    if (currentScaleType === 'linear') {
+      svg.append('g')
+        .attr('transform', `translate(0,${height})`)
+        .attr('class', 'x-axis')
+        .call(d3.axisBottom(x).ticks(10))
+        .selectAll('text')
+        .style('fill', 'white')
+        .attr('font-size', '12px');
+
+      svg.append('g')
+        .attr('class', 'y-axis')
+        .call(d3.axisLeft(y).ticks(10, d3.format('~g')))
+        .selectAll('text')
+        .style('fill', 'white')
+        .attr('font-size', '12px');
+    } else {
+      setUpDefaultScale();
+    }
+
+    svg.select('#x-axis-label')
+      .text(`Price (${currentScaleType.charAt(0).toUpperCase() + currentScaleType.slice(1)} Scale)`);
+
+    svg.select('#y-axis-label')
+      .text(`Peak CCU (${currentScaleType.charAt(0).toUpperCase() + currentScaleType.slice(1)} Scale)`);
+
+    updatePlot();
+  }
 };

@@ -66,6 +66,11 @@
           background-color: #5c7e10 !important;
       }
 
+      #toggle-scale {
+          margin-right: 22px;
+          margin-bottom: 140px;
+      }
+
       #visualization-container,
       #visualization-container-2,
       #visualization-year-filter,
@@ -197,7 +202,15 @@
     <div class="col p-0 position-relative" id="visualization-year-filter"></div>
   </div>
   <div class="row justify-content-center">
-    <div class="col p-0" id="visualization-container"></div>
+    <div class="col p-0 position-relative" id="visualization-container">
+      <div class="btn-group btn-group-toggle position-absolute end-0 bottom-0" data-bs-toggle="buttons" id="toggle-scale">
+        <input type="radio" class="btn-check" name="toggle-scale" id="linear" autocomplete="off">
+        <label class="btn btn-outline-light btn-sm" for="linear">Linear</label>
+
+        <input type="radio" class="btn-check" name="toggle-scale" id="symlog" autocomplete="off" checked>
+        <label class="btn btn-outline-light btn-sm" for="symlog">Symlog</label>
+      </div>
+    </div>
     <div class="col p-0" id="visualization-container-2"></div>
   </div>
   <div class="container" id="details-container"></div>
