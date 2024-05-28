@@ -25,7 +25,7 @@ export const createRecommendationPlot = async (dataLoader: SteamDataLoader, game
     const svg = d3.select(containerId)
       .append('svg')
       .attr('width', plotWidth + margin.left + margin.right)
-      .attr('height', plotHeight + margin.top + margin.bottom)
+      .attr('height', plotHeight + margin.top + margin.bottom + 40) // Increase the height to accommodate the legend and title
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
@@ -120,9 +120,44 @@ export const createRecommendationPlot = async (dataLoader: SteamDataLoader, game
     // Add title at the bottom
     svg.append('text')
       .attr('x', plotWidth / 2)
-      .attr('y', plotHeight + margin.bottom - 10)
+      .attr('y', plotHeight + margin.bottom - 5)
       .attr('text-anchor', 'middle')
       .style('fill', 'white')
       .text(title);
+
+    // Add color legend above the title
+    const legend = svg.append('g')
+      .attr('class', 'legend')
+      .attr('transform', `translate(95, ${plotHeight + margin.bottom + 10})`);
+
+    // Add legend for recommendations up
+    legend.append('rect')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', 18)
+      .attr('height', 18)
+      .style('fill', 'steelblue');
+
+    legend.append('text')
+      .attr('x', 24)
+      .attr('y', 9)
+      .attr('dy', '.35em')
+      .style('fill', 'white')
+      .text('Recommendations Up');
+
+    // Add legend for recommendations down
+    legend.append('rect')
+      .attr('x', 200)
+      .attr('y', 0)
+      .attr('width', 18)
+      .attr('height', 18)
+      .style('fill', 'brown');
+
+    legend.append('text')
+      .attr('x', 224)
+      .attr('y', 9)
+      .attr('dy', '.35em')
+      .style('fill', 'white')
+      .text('Recommendations Down');
   }
 };
