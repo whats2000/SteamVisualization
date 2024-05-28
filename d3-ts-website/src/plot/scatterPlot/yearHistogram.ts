@@ -106,6 +106,17 @@ export const createYearHistogram = (data: ScatterPlotData[], minYear: number, ma
       .style('fill', 'white')
       .text('Number of games');
 
+    // Add Title
+    svg.append('text')
+      .attr('class', 'title')
+      .attr('x', width / 2)
+      .attr('y', -10)
+      .attr('text-anchor', 'middle')
+      .style('fill', 'white')
+      .style('font-size', '16px')
+      .style('font-weight', 'bold')
+      .text('Games Released Over Time');
+
     const brush = d3.brushX()
       .extent([[0, 0], [width, height]])
       .on('brush end', brushed);

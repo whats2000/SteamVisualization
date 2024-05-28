@@ -4,7 +4,7 @@ import { GameData } from '../../../types';
 // Function to create the tags plot
 export const createTagsPlot = (gameDetails: GameData) => {
   // Set dimensions and margins for the plot
-  const margin = { top: 20, right: 30, bottom: 120, left: 50 };
+  const margin = { top: 40, right: 30, bottom: 100, left: 50 };
   const width = 600 - margin.left - margin.right;
   const height = 400 - margin.top - margin.bottom;
 
@@ -60,10 +60,11 @@ export const createTagsPlot = (gameDetails: GameData) => {
   // Plot title
   svg.append('text')
     .attr('x', width / 2)
-    .attr('y', height + margin.bottom - 10)
+    .attr('y', -10)
     .attr('text-anchor', 'middle')
     .style('fill', 'white')
     .style('font-size', '16px')
+    .style('font-weight', 'bold')
     .text('Tags Distribution');
 
   // Color scale

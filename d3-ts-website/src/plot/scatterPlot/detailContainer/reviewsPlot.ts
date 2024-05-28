@@ -4,7 +4,7 @@ import { GameData } from '../../../types';
 // Function to create the reviews plot
 export const createReviewsPlot = (gameDetails: GameData) => {
   // Set dimensions and margins for the plot
-  const margin = { top: 20, right: 30, bottom: 120, left: 80 };
+  const margin = { top: 40, right: 30, bottom: 100, left: 80 };
   const width = 600 - margin.left - margin.right;
   const height = 400 - margin.top - margin.bottom;
 
@@ -19,7 +19,7 @@ export const createReviewsPlot = (gameDetails: GameData) => {
   // Prepare the data
   const data = [
     { type: 'Positive', count: gameDetails.positive },
-    { type: 'Negative', count: gameDetails.negative }
+    { type: 'Negative', count: gameDetails.negative },
   ];
 
   // Set the scales
@@ -45,7 +45,7 @@ export const createReviewsPlot = (gameDetails: GameData) => {
     .selectAll('text')
     .style('fill', 'white');
 
-   // Tooltip
+  // Tooltip
   const tooltip = d3.select('body').append('div')
     .attr('class', 'tooltip')
     .style('opacity', 0)
@@ -58,10 +58,11 @@ export const createReviewsPlot = (gameDetails: GameData) => {
   // Plot title
   svg.append('text')
     .attr('x', width / 2)
-    .attr('y', height + margin.bottom - 10)
+    .attr('y', -10)
     .attr('text-anchor', 'middle')
     .style('fill', 'white')
     .style('font-size', '16px')
+    .style('font-weight', 'bold')
     .text('Reviews');
 
   // Add bars
@@ -75,15 +76,50 @@ export const createReviewsPlot = (gameDetails: GameData) => {
     .attr('y', d => y(d.count))
     .attr('height', d => height - y(d.count))
     .style('fill', d => d.type === 'Positive' ? '#69b3a2' : '#d95f02')
-    .on('mouseover', function (event, d) {
-        tooltip.transition().duration(200).style('opacity', .9);
-        tooltip.html(`${d.type} Reviews: ${d.count}`)
-          .style('left', (event.pageX + 10) + 'px')
-          .style('top', (event.pageY - 28) + 'px');
-        d3.select(this).style('fill', 'lightgray');
-      })
-      .on('mouseout', function (_event, d) {
-        tooltip.transition().duration(500).style('opacity', 0);
-        d3.select(this).style('fill', d.type === 'Positive' ? '#69b3a2' : '#d95f02');
-      });
+    .on('mouseover', function(event, d) {
+      tooltip.transition().duration(200).style('opacity', .9);
+      tooltip.html(`${d.type} Reviews: ${d.count}`)
+        .style('left', (event.pageX + 10) + 'px')
+        .style('top', (event.pageY - 28) + 'px');
+      d3.select(this).style('fill', 'lightgray');
+    })
+    .on('mouseout', function(_event, d) {
+      tooltip.transition().duration(500).style('opacity', 0);
+      d3.select(this).style('fill', d.type === 'Positive' ? '#69b3a2' : '#d95f02');
+    });
+
+  // Add color legend at the bottom
+  const legend = svg.append('g')
+    .attr('class', 'legend')
+    .attr('transform', `translate(135, ${height + 70})`);
+
+  // Add legend for recommendations up
+    legend.append('rect')
+      .attr('x', 45)
+      .attr('y', 0)
+      .attr('width', 18)
+      .attr('height', 18)
+      .style('fill', '#69b3a2');
+
+    legend.append('text')
+      .attr('x', 69)
+      .attr('y', 9)
+      .attr('dy', '.35em')
+      .style('fill', 'white')
+      .text('Positive Reviews');
+
+    // Add legend for recommendations down
+    legend.append('rect')
+      .attr('x', 200)
+      .attr('y', 0)
+      .attr('width', 18)
+      .attr('height', 18)
+      .style('fill', '#d95f02');
+
+    legend.append('text')
+      .attr('x', 224)
+      .attr('y', 9)
+      .attr('dy', '.35em')
+      .style('fill', 'white')
+      .text('Negative Reviews');
 };

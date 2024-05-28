@@ -10,7 +10,7 @@ export const createRecommendationPlot = async (dataLoader: SteamDataLoader, game
   }
 
   // Define the dimensions and margins for the plots
-  const margin = { top: 10, right: 30, bottom: 50, left: 60 };
+  const margin = { top: 40, right: 30, bottom: 20, left: 60 };
   const width = 1100 - margin.left - margin.right;
   const height = 300 - margin.top - margin.bottom;
 
@@ -117,15 +117,17 @@ export const createRecommendationPlot = async (dataLoader: SteamDataLoader, game
         tooltip.transition().duration(500).style('opacity', 0);
       });
 
-    // Add title at the bottom
+    // Add title at the top
     svg.append('text')
       .attr('x', plotWidth / 2)
-      .attr('y', plotHeight + margin.bottom - 5)
+      .attr('y', -10)
       .attr('text-anchor', 'middle')
       .style('fill', 'white')
+      .style('font-size', '16px')
+      .style('font-weight', 'bold')
       .text(title);
 
-    // Add color legend above the title
+    // Add color legend at the bottom
     const legend = svg.append('g')
       .attr('class', 'legend')
       .attr('transform', `translate(95, ${plotHeight + margin.bottom + 10})`);
