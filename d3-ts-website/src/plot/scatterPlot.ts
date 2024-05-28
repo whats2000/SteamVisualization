@@ -18,13 +18,12 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
     '20000000 - 50000000', '50000000 - 100000000', '100000000 - 200000000',
   ];
 
-  let filteredData = data.filter(d => {
-    const year = new Date(d.release_date).getFullYear();
-    return d.peak_ccu > 0 && year >= minYear && year <= maxYear;
-  });
+  let filteredData = [...data];
 
   let activeLegend: string | null = null;
   let selectedPoint: ScatterPlotData | null = null;
+  let currentMinYear = minYear;
+  let currentMaxYear = maxYear;
 
   // Set dimensions and margins for the plot
   const margin = { top: 20, right: 150, bottom: 40, left: 50 };
@@ -289,18 +288,20 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
   createYearHistogram(data, minYear, maxYear, updateYearFilter);
 
   function updateYearFilter([newMinYear, newMaxYear]: [number, number]) {
+    currentMinYear = newMinYear;
+    currentMaxYear = newMaxYear;
+    updateFilteredData();
+  }
+
+  function updateFilteredData() {
     const searchText = (document.getElementById('search-game') as HTMLInputElement).value.toLowerCase();
 
     filteredData = data.filter(d => {
       const year = new Date(d.release_date).getFullYear();
-      return d.peak_ccu > 0 && year >= newMinYear && year <= newMaxYear && d.name.toLowerCase().includes(searchText);
+      return d.peak_ccu > 0 && year >= currentMinYear && year <= currentMaxYear && d.name.toLowerCase().includes(searchText);
     });
 
-    circlesGroup.selectAll('circle').remove();
-    resetCircleGroup(circlesGroup);
-
-    updateCircles(circlesGroup);
-    updateZoomPlot();
+    updatePlot();
   }
 
   function resetCircleGroup(circlesGroup: d3.Selection<SVGGElement, unknown, HTMLElement, any>) {
@@ -355,21 +356,16 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
       .attr('r', (d: ScatterPlotData) => d === selectedPoint ? 7 : 5);
   }
 
-  updateZoomPlot();
-
-  // Add search functionality
-  const searchInput = document.getElementById('search-game') as HTMLInputElement;
-  searchInput.addEventListener('input', function () {
-    const searchText = searchInput.value.toLowerCase();
-
-    filteredData = data.filter(d => {
-      const year = new Date(d.release_date).getFullYear();
-      return d.peak_ccu > 0 && year >= minYear && year <= maxYear && d.name.toLowerCase().includes(searchText);
-    });
-
+  function updatePlot() {
     circlesGroup.selectAll('circle').remove();
     resetCircleGroup(circlesGroup);
     updateCircles(circlesGroup);
     updateZoomPlot();
-  });
+  }
+
+  updateZoomPlot();
+
+  // Add search functionality
+  const searchInput = document.getElementById('search-game') as HTMLInputElement;
+  searchInput.addEventListener('input', updateFilteredData);
 };
