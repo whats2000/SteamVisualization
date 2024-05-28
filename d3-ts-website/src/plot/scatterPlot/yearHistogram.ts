@@ -4,7 +4,7 @@ import { SpinnerProgress } from '../../modals/spinnerProgress';
 
 export const createYearHistogram = (data: ScatterPlotData[], minYear: number, maxYear: number, updateYearFilter: (years: [number, number]) => void) => {
   const margin = { top: 40, right: 30, bottom: 50, left: 50 };
-  const width = 1200 - margin.left - margin.right;
+  const width = 1300 - margin.left - margin.right;
   const height = 250 - margin.top - margin.bottom;
 
   let binType: 'yearly' | 'monthly' = 'yearly';
@@ -134,8 +134,9 @@ export const createYearHistogram = (data: ScatterPlotData[], minYear: number, ma
   d3.select('#bin-toggle').remove();
   const toggle = d3.select('#visualization-year-filter')
     .append('button')
-    .classed('btn btn-outline-light position-absolute top-0 start-0 mt-4', true)
+    .classed('btn btn-outline-light position-absolute top-0 start-0', true)
     .style('margin-left', '100px')
+    .style('margin-top', margin.top + 'px')
     .attr('id', 'bin-toggle')
     .text('Switch to Monthly')
     .on('click', () => {

@@ -26,8 +26,8 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
   let currentMaxYear = maxYear;
 
   // Set dimensions and margins for the plot
-  const margin = { top: 20, right: 150, bottom: 40, left: 50 };
-  const width = 600 - margin.left - margin.right;
+  const margin = { top: 20, right: 150, bottom: 50, left: 60 };
+  const width = 650 - margin.left - margin.right;
   const height = 500 - margin.top - margin.bottom;
 
   let currentBrushExtent: [[number, number], [number, number]] = [[0, 0], [width, height]];
@@ -77,21 +77,17 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
   // Add X axis
   svg.append('g')
     .attr('transform', `translate(0,${height})`)
-    .call(d3.axisBottom(x).ticks(10))
+    .call(d3.axisBottom(x).tickValues([0, 0.5, 1, 2, 3, 5, 7, 10, 15, 20, 30, 40, 60, 100, 150, 250]).ticks(20))
     .selectAll('text')
     .style('fill', 'white')
-    .style('text-anchor', 'end')
-    .attr('dx', '-0.8em')
-    .attr('dy', '0.15em')
-    .attr('font-size', '8px')
-    .attr('transform', 'rotate(-65)');
+    .attr('font-size', '12px');
 
   // Add Y axis
   svg.append('g')
-    .call(d3.axisLeft(y).ticks(10, d3.format('~g')))
+    .call(d3.axisLeft(y).tickValues([0, 2, 10, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000]).ticks(15, d3.format('~g')))
     .selectAll('text')
     .style('fill', 'white')
-    .attr('font-size', '8px');
+    .attr('font-size', '12px');
 
   // Add dots without interactivity on the original plot
   const circlesGroup = svg.append('g');
@@ -118,7 +114,7 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
   svg.append('text')
     .attr('text-anchor', 'end')
     .attr('transform', 'rotate(-90)')
-    .attr('y', -margin.left + 70)
+    .attr('y', -margin.left + 80)
     .attr('x', -margin.top)
     .text('Peak CCU (Symlog Scale)')
     .style('fill', 'white');
@@ -273,21 +269,17 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
     // Add zoomed X axis
     zoomSvgGroup.append('g')
       .attr('transform', `translate(0,${height})`)
-      .call(d3.axisBottom(xZoom).ticks(10))
+      .call(d3.axisBottom(xZoom).ticks(5))
       .selectAll('text')
       .style('fill', 'white')
-      .style('text-anchor', 'end')
-      .attr('dx', '-0.8em')
-      .attr('dy', '0.15em')
-      .attr('font-size', '8px')
-      .attr('transform', 'rotate(-65)');
+      .attr('font-size', '12px');
 
     // Add zoomed Y axis
     zoomSvgGroup.append('g')
-      .call(d3.axisLeft(yZoom).ticks(10, d3.format('~g')))
+      .call(d3.axisLeft(yZoom).ticks(5, d3.format('~g')))
       .selectAll('text')
       .style('fill', 'white')
-      .attr('font-size', '8px');
+      .attr('font-size', '12px');
 
     updateZoomCircles(zoomedCircles);
   }
