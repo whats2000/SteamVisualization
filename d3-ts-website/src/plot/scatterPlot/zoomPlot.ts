@@ -159,7 +159,7 @@ export const createZoomPlot = (
   // Add zoomed title
   zoomSvgGroup.append('text')
     .attr('x', width / 2)
-    .attr('y', margin.top - 10)
+    .attr('y', margin.top - 65)
     .attr('text-anchor', 'middle')
     .style('fill', 'white')
     .style('font-size', '16px')

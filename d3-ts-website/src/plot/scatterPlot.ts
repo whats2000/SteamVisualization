@@ -28,7 +28,7 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
   let hasShownAlert = false;
 
   // Set dimensions and margins for the plot
-  const margin = { top: 20, right: 150, bottom: 50, left: 60 };
+  const margin = { top: 50, right: 150, bottom: 50, left: 60 };
   const width = 650 - margin.left - margin.right;
   const height = 500 - margin.top - margin.bottom;
 
@@ -121,7 +121,7 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
   svg.append('text')
     .attr('text-anchor', 'end')
     .attr('x', width)
-    .attr('y', height + margin.top - 30)
+    .attr('y', height + margin.top - 10)
     .attr('id', 'x-axis-label')
     .text(`Price (${currentScaleType.charAt(0).toUpperCase() + currentScaleType.slice(1)} Scale)`)
     .style('fill', 'white');
@@ -138,7 +138,7 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
   // Add title
   svg.append('text')
     .attr('x', width / 2)
-    .attr('y', margin.top - 10)
+    .attr('y', margin.top - 65)
     .attr('text-anchor', 'middle')
     .style('fill', 'white')
     .style('font-size', '16px')
