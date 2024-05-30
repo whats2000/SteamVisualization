@@ -72,9 +72,9 @@ export const createZoomPlot = (
       .attr('id', 'no-data-alert')
       .attr('class', 'border rounded-5 p-5 position-absolute top-50 start-50 translate-middle')
       .html(`
-          <h4 class="alert-heading">No data captured</h4>
-          <p>Please use the brush tool on the left plot to select an area to zoom in.</p>
-        `);
+        <h4 class="alert-heading">No data captured</h4>
+        <p>Please use the brush tool on the left plot to select an area to zoom in.</p>
+      `);
     return;
   } else if (zoomedData.length > 0) {
     const alert = document.getElementById('no-data-alert');
@@ -167,4 +167,37 @@ export const createZoomPlot = (
     .text('Zoomed Area (Click on a point for more details)');
 
   updateZoomCircles(zoomedCircles);
+
+  // Add summary statistics
+  const summaryGroup = zoomSvgGroup.append('g')
+    .attr('transform', `translate(${width + 18}, 10)`);
+
+  const avgPrice = d3.mean(zoomedData, d => d.price) || 0;
+  const avgPeakCCU = d3.mean(zoomedData, d => d.peak_ccu) || 0;
+  const count = zoomedData.length;
+
+  summaryGroup.append('text')
+    .attr('y', 0)
+    .style('fill', 'white')
+    .style('font-size', '12px')
+    .style('font-weight', 'bold')
+    .text(`Summary Statistics`);
+
+  summaryGroup.append('text')
+    .attr('y', 20)
+    .style('fill', 'white')
+    .style('font-size', '12px')
+    .text(`Avg. Price: $${avgPrice.toFixed(2)}`);
+
+  summaryGroup.append('text')
+    .attr('y', 40)
+    .style('fill', 'white')
+    .style('font-size', '12px')
+    .text(`Avg. Peak CCU: ${Math.round(avgPeakCCU)}`);
+
+  summaryGroup.append('text')
+    .attr('y', 60)
+    .style('fill', 'white')
+    .style('font-size', '12px')
+    .text(`Count: ${count}`);
 };

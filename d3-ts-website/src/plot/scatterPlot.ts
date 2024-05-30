@@ -333,7 +333,8 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
     svg.append('g')
       .attr('class', 'y-axis')
       .call(d3.axisLeft(y)
-        .tickValues([0, 2, 10, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000]).ticks(15, d3.format('~g')))
+        .tickValues([0, 2, 10, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000])
+        .ticks(15, d3.format('~g')))
       .selectAll('text')
       .style('fill', 'white')
       .attr('font-size', '12px');
