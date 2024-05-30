@@ -6,6 +6,10 @@ export const createRecommendationPlot = async (dataLoader: SteamDataLoader, game
   const recommendationData = await dataLoader.getRecentlyRecommendation(gameId);
   if (!recommendationData) {
     console.log('Failed to load recommendation data');
+
+    // Hide the spinner
+    hideSpinner();
+
     return;
   }
 
@@ -20,12 +24,23 @@ export const createRecommendationPlot = async (dataLoader: SteamDataLoader, game
   // Create the second plot for recent recommendations
   createPlot('#recommendations-plot-container-2', recommendationData.results.recent, 'Recent Recommendations', margin, width / 2, height);
 
+  // Hide the spinner
+  hideSpinner();
+
+  function hideSpinner() {
+    const recommendationSpinner = document.getElementById('recommendation-loading-container');
+    if (recommendationSpinner) {
+      recommendationSpinner.style.display = 'none';
+    }
+  }
+
   function createPlot(containerId: string, data: any[], title: string, margin: { top: number, right: number, bottom: number, left: number }, plotWidth: number, plotHeight: number) {
     // Append the svg object to the body of the page
     const svg = d3.select(containerId)
       .append('svg')
       .attr('width', plotWidth + margin.left + margin.right)
       .attr('height', plotHeight + margin.top + margin.bottom + 40) // Increase the height to accommodate the legend and title
+      .attr('class', 'fade-in')
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
@@ -161,5 +176,8 @@ export const createRecommendationPlot = async (dataLoader: SteamDataLoader, game
       .attr('dy', '.35em')
       .style('fill', 'white')
       .text('Recommendations Down');
+
+    // Add the fade-in class to the svg
+    d3.select(containerId + ' svg').classed('visible', true);
   }
 };

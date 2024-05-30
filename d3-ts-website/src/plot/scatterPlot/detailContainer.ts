@@ -72,9 +72,14 @@ export const createDetailContainer = async (d: ScatterPlotData, dataLoader: Stea
           <div class="col-12 col-xl-6 d-flex justify-content-center mb-5" id="reviews-plot-container"></div>
           <div class="col-12 col-xl-6 d-flex justify-content-center mb-5" id="tags-plot-container"></div>
         </div>
-        <div class="row mb-5">
-            <div class="col-12 col-xl-6 d-flex justify-content-center" id="recommendations-plot-container"></div>
-            <div class="col-12 col-xl-6 d-flex justify-content-center" id="recommendations-plot-container-2"></div>
+        <div id="recommendation-loading-container" class="row">
+          <div class="justify-content-center d-flex">
+            <div id="spinner" class="spinner-border text-primary" role="status"></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 col-xl-6 d-flex justify-content-center mb-5" id="recommendations-plot-container"></div>
+          <div class="col-12 col-xl-6 d-flex justify-content-center mb-5" id="recommendations-plot-container-2"></div>
         </div>
       `;
 

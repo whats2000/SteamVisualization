@@ -41,6 +41,19 @@
           }
       }
 
+      .fade-in {
+          opacity: 0;
+          visibility: hidden;
+          animation: fadeIn 1s forwards;
+      }
+
+      @keyframes fadeIn {
+          to {
+              opacity: 1;
+              visibility: visible;
+          }
+      }
+
       .alert-container {
           position: absolute;
           top: 50%;
