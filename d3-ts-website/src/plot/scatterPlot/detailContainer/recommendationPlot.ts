@@ -35,6 +35,9 @@ export const createRecommendationPlot = async (dataLoader: SteamDataLoader, game
   }
 
   function createPlot(containerId: string, data: any[], title: string, margin: { top: number, right: number, bottom: number, left: number }, plotWidth: number, plotHeight: number) {
+    // Clear the svg if it already exists
+    d3.select(containerId + ' svg').remove();
+
     // Append the svg object to the body of the page
     const svg = d3.select(containerId)
       .append('svg')

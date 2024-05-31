@@ -56,9 +56,6 @@ export const createCategoriesGenresBarPlot = (
     b.count - a.count || b.avgPeakCCU - a.avgPeakCCU || a.name.localeCompare(b.name)
   );
 
-  console.log(categoriesData)
-  console.log(genresData)
-
   // Function to create horizontal bar charts
   const createBarChart = (data: BarPlotData[], containerId: string, selectedItems: string[], updateFilter: (items: string[]) => void) => {
     const margin = { top: 10, right: 30, bottom: 135, left: 140 };

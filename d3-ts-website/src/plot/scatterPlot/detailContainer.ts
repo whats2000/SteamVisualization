@@ -8,25 +8,41 @@ export const createDetailContainer = async (d: ScatterPlotData, dataLoader: Stea
   if (detailsContainer) {
     detailsContainer.classList.add('visible');
     detailsContainer.innerHTML = `
-      <div class="container-fluid">
-        <div class="row mb-3">
+      <div>
+        <div class="row mb-2">
           <div class="col-12">
             <h3 class="text-center">${d.name}</h3>
           </div>
         </div>
-        <div class="row mb-3">
+        <div class="row mb-2">
           <div class="col-12 text-center">
             <img src="${d.header_image}" alt="${d.name}" class="img-fluid">
           </div>
         </div>
-        <div class="row mb-5">
-          <div class="col-12 text-center">
-            <p><strong>Price:</strong> ${d.price}</p>
-            <p><strong>Peak CCU:</strong> ${d.peak_ccu}</p>
-            <p><strong>Estimated Owners:</strong> ${d.estimated_owners}</p>
-            <p><strong>Release Date:</strong> ${d.release_date}</p>
+        <div class="row mb-2">
+          <div class="col-12">
             <a class="link-light" href="https://store.steampowered.com/app/${d.game_id}" target="_blank" rel="noopener noreferrer">View on Steam</a>
           </div>
+        </div>
+        <div class="container-fluid mt-4 px-5">
+          <div class="row">
+            <div class="col-12 col-xl-6 text-start">
+              <p><strong>Price:</strong> ${d.price}</p>
+            </div>
+            <div class="col-12 col-xl-6 text-start">
+              <p><strong>Peak CCU:</strong> ${d.peak_ccu}</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 col-xl-6 text-start">
+              <p><strong>Estimated Owners:</strong> ${d.estimated_owners}</p>
+            </div>
+            <div class="col-12 col-xl-6 text-start">
+              <p><strong>Release Date:</strong> ${d.release_date}</p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
           <div class="col-12">
             <p class="loading">Loading additional details...</p>
           </div>
@@ -42,46 +58,38 @@ export const createDetailContainer = async (d: ScatterPlotData, dataLoader: Stea
 
       // Append the remaining details once loaded
       detailsContainer.innerHTML += `
-        <div class="row mt-2">
-          <div class="col-12 col-xl-6 text-start px-5">
-            <p><strong>Developers:</strong> ${gameDetails.developers.join(', ')}</p>
-            <p><strong>Publishers:</strong> ${gameDetails.publishers.join(', ')}</p>
-            <p><strong>Genres:</strong> ${gameDetails.genres.join(', ')}</p>
-            <p><strong>Supported Platforms:</strong> ${gameDetails.windows ? 'Windows' : ''} ${gameDetails.mac ? 'Mac' : ''} ${gameDetails.linux ? 'Linux' : ''}</p>
-          </div>
-          <div class="col-12 col-xl-6 text-start px-5">
-            <p><strong>Categories:</strong> ${gameDetails.categories.join(', ')}</p>
-            <p><strong>Metacritic Score:</strong> ${gameDetails.metacritic_score}</p>
-            <p><strong>User Score:</strong> ${gameDetails.user_score}</p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12 col-xl-6 text-start px-5">
-            <p><strong>Positive Reviews:</strong> ${gameDetails.positive}</p>
-          </div>
-          <div class="col-12 col-xl-6 text-start px-5">
-            <p><strong>Negative Reviews:</strong> ${gameDetails.negative}</p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12 text-start px-5">
-            <p><strong>Supported Languages:</strong> ${gameDetails.supported_languages.join(', ')}</p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12 col-xl-6 d-flex justify-content-center mb-5" id="reviews-plot-container"></div>
-          <div class="col-12 col-xl-6 d-flex justify-content-center mb-5" id="tags-plot-container"></div>
-        </div>
-        <div id="recommendation-loading-container" class="row">
-          <div class="justify-content-center d-flex">
-            <div id="spinner" class="spinner-border text-primary" role="status"></div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12 col-xl-6 d-flex justify-content-center mb-5" id="recommendations-plot-container"></div>
-          <div class="col-12 col-xl-6 d-flex justify-content-center mb-5" id="recommendations-plot-container-2"></div>
-        </div>
-      `;
+  <div class="container-fluid px-5">
+    <div class="row">
+      <div class="col-12 col-xl-6 text-start">
+        <p><strong>Developers:</strong> ${gameDetails.developers.join(', ')}</p>
+        <p><strong>Publishers:</strong> ${gameDetails.publishers.join(', ')}</p>
+        <p><strong>Genres:</strong> ${gameDetails.genres.join(', ')}</p></div>
+      <div class="col-12 col-xl-6 text-start">
+        <p><strong>Supported Platforms:</strong> ${gameDetails.windows ? 'Windows' : ''} ${gameDetails.mac ? 'Mac' : ''} ${gameDetails.linux ? 'Linux' : ''}</p>
+        <p><strong>Categories:</strong> ${gameDetails.categories.join(', ')}</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 text-start">
+        <p><strong>Supported Languages:</strong> ${gameDetails.supported_languages.join(', ')}</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 col-xl-6 d-flex justify-content-center mb-5" id="reviews-plot-container"></div>
+      <div class="col-12 col-xl-6 d-flex justify-content-center mb-5" id="tags-plot-container"></div>
+    </div>
+    <div id="recommendation-loading-container" class="row">
+      <div class="col-12 d-flex justify-content-center mb-5">
+        <div id="spinner" class="spinner-border text-primary" role="status"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 col-xl-6 d-flex justify-content-center mb-5" id="recommendations-plot-container"></div>
+      <div class="col-12 col-xl-6 d-flex justify-content-center mb-5" id="recommendations-plot-container-2"></div>
+    </div>
+  </div>
+`;
+
 
       // Create reviews plot
       createReviewsPlot(gameDetails);
