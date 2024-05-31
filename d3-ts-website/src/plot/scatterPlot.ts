@@ -49,23 +49,13 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
     );
   }
 
+  const updateCategoriesGenresBarPlot = () => {
+    createCategoriesGenresBarPlot(data, filterCategories, filterGenres, updateCategoriesFilter, updateGenresFilter);
+  }
+
   const updateYearFilter = ([newMinYear, newMaxYear]: [number, number]) => {
     currentMinYear = newMinYear;
     currentMaxYear = newMaxYear;
-    applyFilters();
-  }
-
-  const updateFilteredData = () => {
-    const searchText = (document.getElementById('search-game') as HTMLInputElement).value.toLowerCase();
-
-    filteredData = data.filter(d => {
-      const year = new Date(d.release_date).getFullYear();
-      return d.peak_ccu > 0 &&
-        year >= currentMinYear &&
-        year <= currentMaxYear &&
-        d.name.toLowerCase().includes(searchText);
-    });
-
     applyFilters();
   }
 
@@ -122,12 +112,15 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
   }
 
   const applyFilters = () => {
+    const searchText = (document.getElementById('search-game') as HTMLInputElement).value.toLowerCase();
+
     filteredData = data.filter(d => {
       const year = new Date(d.release_date).getFullYear();
       const matchesCategories = filterCategories.length === 0 || filterCategories.some(cat => d.categories.includes(cat));
       const matchesGenres = filterGenres.length === 0 || filterGenres.some(genre => d.genres.includes(genre));
 
       return d.peak_ccu > 0 &&
+        d.name.toLowerCase().includes(searchText) &&
         year >= currentMinYear &&
         year <= currentMaxYear &&
         matchesCategories &&
@@ -135,7 +128,6 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
     });
 
     updatePlot();
-    createCategoriesGenresBarPlot(data, filterCategories, filterGenres, updateCategoriesFilter, updateGenresFilter);
   };
 
   const setUpDefaultScale = () => {
@@ -237,12 +229,14 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
   const updateCategoriesFilter = (categories: string[]) => {
     filterCategories = categories;
     applyFilters();
+    updateCategoriesGenresBarPlot();
   };
 
   // Update genres filter
   const updateGenresFilter = (genres: string[]) => {
     filterGenres = genres;
     applyFilters();
+    updateCategoriesGenresBarPlot();
   };
 
   // Set dimensions and margins for the plot
@@ -387,7 +381,7 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
 
   // Add search functionality
   const searchInput = document.getElementById('search-game') as HTMLInputElement;
-  searchInput.addEventListener('input', updateFilteredData);
+  searchInput.addEventListener('input', applyFilters);
 
   // Add scale toggle functionality
   const linearScaleButton = document.getElementById('linear') as HTMLInputElement;

@@ -21,7 +21,8 @@ def create_app():
             db.create_all()
         except sqlalchemy.exc.DatabaseError:
             print("Database not available, please make sure you have start the mariadb server (xampp) and try again.")
-            exit(1)
+            # TODO Implement database creation logic
+            # exit(1)
 
         from .routes import bp as main_bp
         app.register_blueprint(main_bp)
