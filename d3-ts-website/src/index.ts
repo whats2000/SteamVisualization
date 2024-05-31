@@ -59,7 +59,7 @@ const init = async () => {
 
   try {
     const isDatabaseOnline = await checkDatabaseConnection();
-    const dataLoader = isDatabaseOnline ? new SteamDataFromDatabase() : new SteamDataFromJson(1);
+    const dataLoader = isDatabaseOnline ? new SteamDataFromDatabase() : new SteamDataFromJson();
     await dataLoader.loadScatterPlotData();
 
     // Scatter plot

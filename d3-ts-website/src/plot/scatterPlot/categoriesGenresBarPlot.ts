@@ -54,7 +54,11 @@ export const createCategoriesGenresBarPlot = (
   const createBarChart = (data: { name: string, avgPeakCCU: number, count: number }[], containerId: string, selectedItems: string[], updateFilter: (items: string[]) => void) => {
     const margin = { top: 10, right: 30, bottom: 100, left: 140 };
     const width = 500 - margin.left - margin.right;
-    const height = 500 - margin.top - margin.bottom;
+    let height = 650 - margin.top - margin.bottom;
+
+    if (containerId === '#genres-filter') {
+      height = 500 - margin.top - margin.bottom;
+    }
 
     const container = d3.select(containerId);
     container.selectAll('svg').remove();
@@ -103,6 +107,17 @@ export const createCategoriesGenresBarPlot = (
         .style('box-shadow', '0 0 10px rgba(0,0,0,0.5)');
     }
 
+    const showTooltip = (event: MouseEvent, d: { name: string, count: number, avgPeakCCU: number }) => {
+      tooltip.transition().duration(200).style('opacity', .9);
+      tooltip.html(`Category: ${d.name}<br>Count: ${d.count}<br>Avg Peak CCU: ${d.avgPeakCCU.toFixed(2)}`)
+        .style('left', (event.pageX + 5) + 'px')
+        .style('top', (event.pageY - 28) + 'px');
+    }
+
+    const hideTooltip = () => {
+      tooltip.transition().duration(500).style('opacity', 0);
+    }
+
     svg.selectAll('rect')
       .data(data)
       .enter()
@@ -122,17 +137,8 @@ export const createCategoriesGenresBarPlot = (
         // Remove the tooltip on click
         tooltip.transition().duration(500).style('opacity', 0);
       })
-      .on('mouseover', function (event, d) {
-        d3.select(this).attr('opacity', 0.7);
-        tooltip.transition().duration(200).style('opacity', .9);
-        tooltip.html(`Category: ${d.name}<br>Count: ${d.count}<br>Avg Peak CCU: ${d.avgPeakCCU.toFixed(2)}`)
-          .style('left', (event.pageX + 5) + 'px')
-          .style('top', (event.pageY - 28) + 'px');
-      })
-      .on('mouseout', function () {
-        d3.select(this).attr('opacity', 1);
-        tooltip.transition().duration(500).style('opacity', 0);
-      });
+      .on('mouseover', showTooltip)
+      .on('mouseout', hideTooltip);
 
     // Add selection triangles
     svg.selectAll('polygon')
@@ -145,7 +151,18 @@ export const createCategoriesGenresBarPlot = (
         const bandwidth = y.bandwidth();
         return `${xValue},${yValue} ${xValue + 10},${yValue + bandwidth / 2} ${xValue},${yValue + bandwidth}`;
       })
-      .attr('fill', '#5c7e10');
+      .attr('fill', '#5c7e10')
+      .on('click', function (_event, d) {
+        const selected = selectedItems.includes(d.name)
+          ? selectedItems.filter(item => item !== d.name)
+          : [...selectedItems, d.name];
+        updateFilter(selected);
+
+        // Remove the tooltip on click
+        tooltip.transition().duration(500).style('opacity', 0);
+      })
+      .on('mouseover', showTooltip)
+      .on('mouseout', hideTooltip);
 
     // Add legend
     const legendHeight = 20;
