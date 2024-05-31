@@ -127,7 +127,7 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
         matchesGenres;
     });
 
-    updatePlot();
+    updateScatterPlotZoomPlot();
   };
 
   const setUpDefaultScale = () => {
@@ -182,47 +182,24 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
     svg.select('#y-axis-label')
       .text(`Peak CCU (${currentScaleType.charAt(0).toUpperCase() + currentScaleType.slice(1)} Scale)`);
 
-    updatePlot();
+    updateScatterPlotZoomPlot();
   };
 
   // Set the scales based on the selected scale type
   const setScales = (scaleType: string) => {
-    if (scaleType === 'linear') {
-      x = d3.scaleLinear()
-        .domain([
-          d3.min(filteredData, d => d.price) as number,
-          d3.max(filteredData, d => d.price) as number,
-        ])
-        .range([0, width]);
+    x = (scaleType === 'linear' ? d3.scaleLinear() : d3.scaleSymlog())
+      .domain([
+        d3.min(filteredData, d => d.price) as number,
+        d3.max(filteredData, d => d.price) as number,
+      ])
+      .range([0, width]);
 
-      y = d3.scaleLinear()
-        .domain([
-          d3.min(filteredData, d => d.peak_ccu) as number,
-          d3.max(filteredData, d => d.peak_ccu) as number,
-        ])
-        .range([height, 0]);
-    } else {
-      x = d3.scaleSymlog()
-        .domain([
-          d3.min(filteredData, d => d.price) as number,
-          d3.max(filteredData, d => d.price) as number,
-        ])
-        .range([0, width]);
-
-      y = d3.scaleSymlog()
-        .domain([
-          d3.min(filteredData, d => d.peak_ccu) as number,
-          d3.max(filteredData, d => d.peak_ccu) as number,
-        ])
-        .range([height, 0]);
-    }
-  };
-
-  const updatePlot = () => {
-    circlesGroup.selectAll('circle').remove();
-    resetCircleGroup(circlesGroup);
-    updateCircles(circlesGroup);
-    updateZoomPlot();
+    y = (scaleType === 'linear' ? d3.scaleLinear() : d3.scaleSymlog())
+      .domain([
+        d3.min(filteredData, d => d.peak_ccu) as number,
+        d3.max(filteredData, d => d.peak_ccu) as number,
+      ])
+      .range([height, 0]);
   };
 
   // Update categories filter
@@ -237,6 +214,13 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
     filterGenres = genres;
     applyFilters();
     updateCategoriesGenresBarPlot();
+  };
+
+  const updateScatterPlotZoomPlot = () => {
+    circlesGroup.selectAll('circle').remove();
+    resetCircleGroup(circlesGroup);
+    updateCircles(circlesGroup);
+    updateZoomPlot();
   };
 
   // Set dimensions and margins for the plot
@@ -401,9 +385,11 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
     }
   });
 
+  // Set up the default scale
   setUpDefaultScale();
 
-  updatePlot();
+  // Update the scatter plot and zoom plot
+  updateScatterPlotZoomPlot();
 
   // Add histogram for game release years
   createYearHistogram(data, minYear, maxYear, updateYearFilter);
