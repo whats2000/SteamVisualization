@@ -39,6 +39,8 @@ export class SteamDataFromJson implements SteamDataLoader {
       peak_ccu: gameData.peak_ccu,
       header_image: gameData.header_image,
       estimated_owners: gameData.estimated_owners,
+      categories: gameData.categories,
+      genres: gameData.genres,
     }));
   };
 
@@ -64,10 +66,6 @@ export class SteamDataFromJson implements SteamDataLoader {
 
   public getScatterPlotData = (): ScatterPlotData[] => {
     return this.loadedScatterPlotData;
-  };
-
-  public loadTimelineData = async (): Promise<GameData[]> => {
-    return Object.values(this.loadedGameData);
   };
 
   public loadGameDetails = async (gameId: string): Promise<GameData> => {

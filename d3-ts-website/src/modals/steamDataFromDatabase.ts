@@ -1,6 +1,5 @@
 import {
   ScatterPlotData,
-  TimelinePlotData,
   SteamDataLoader,
   GameData,
   GameRecommendation,
@@ -42,14 +41,6 @@ export class SteamDataFromDatabase implements SteamDataLoader {
     }
     return response.json();
   };
-
-  async loadTimelineData(): Promise<TimelinePlotData[]> {
-    const response = await fetch('http://localhost:5000/api/game_timeline');
-    if (!response.ok) {
-      throw new Error('Failed to fetch data from database');
-    }
-    return response.json();
-  }
 
   public getRecentlyRecommendation = async (gameId: string): Promise<GameRecommendation | false> => {
     try {

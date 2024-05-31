@@ -6,4 +6,6 @@ export type ScatterPlotData = {
   release_date: string;
   header_image: string;
   estimated_owners: string;
+  categories: string[];
+  genres: string[];
 }

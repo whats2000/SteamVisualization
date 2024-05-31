@@ -5,7 +5,6 @@ import { SteamDataFromJson } from './modals/steamDataFromJson';
 import { SteamDataFromDatabase } from './modals/steamDataFromDatabase';
 import { SpinnerProgress } from './modals/spinnerProgress';
 import { createScatterPlot } from './plot/scatterPlot';
-import { timelinePlot } from './plot/timelinePlot';
 
 const checkDatabaseConnection = async (): Promise<boolean> => {
   return fetch('http://localhost:5000/api/check_database')
@@ -60,19 +59,11 @@ const init = async () => {
 
   try {
     const isDatabaseOnline = await checkDatabaseConnection();
-    const dataLoader = isDatabaseOnline ? new SteamDataFromDatabase() : new SteamDataFromJson();
+    const dataLoader = isDatabaseOnline ? new SteamDataFromDatabase() : new SteamDataFromJson(1);
     await dataLoader.loadScatterPlotData();
 
     // Scatter plot
     createScatterPlot(dataLoader);
-
-    // Below data will not be loaded if the database is offline
-    if (!isDatabaseOnline) return;
-
-    const timelineData = await (dataLoader as SteamDataFromDatabase).loadTimelineData();
-
-    // Timeline plot
-    timelinePlot(timelineData);
   } catch (error) {
     console.error('Error loading data:', error);
   } finally {
