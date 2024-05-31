@@ -62,6 +62,13 @@
           z-index: 10;
       }
 
+      .form-range::-webkit-slider-thumb {
+          background: #5c7e10 !important;
+      }
+
+      .form-range::-moz-range-thumb {
+          background: #5c7e10 !important;
+      }
 
       body {
           min-height: 100vh;
@@ -223,9 +230,9 @@
   </div>
   <div class="offcanvas-body">
     <h6>Categories</h6>
-    <div id="categories-filter" class="mb-3"></div>
+    <div id="categories-filter" class="mb-3 position-relative"></div>
     <h6>Genres</h6>
-    <div id="genres-filter" class="mb-3"></div>
+    <div id="genres-filter" class="mb-3 position-relative"></div>
   </div>
 </div>
 <div id="loading-container">
