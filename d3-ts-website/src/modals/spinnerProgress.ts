@@ -14,11 +14,11 @@ export class SpinnerProgress {
     const spinner = document.getElementById('spinner') as HTMLElement;
     spinner.style.display = 'none';
 
-    const categoriesSpinner = document.getElementById('spinner-categories') as HTMLElement;
-    categoriesSpinner.style.display = 'none';
+    const categoriesSpinner = document.getElementById('spinner-categories-container') as HTMLElement;
+    categoriesSpinner.remove();
 
-    const genresSpinner = document.getElementById('spinner-genres') as HTMLElement;
-    genresSpinner.style.display = 'none';
+    const genresSpinner = document.getElementById('spinner-genres-container') as HTMLElement;
+    genresSpinner.remove();
   };
 
   static hideLoadingContainer = () => {

@@ -1,6 +1,5 @@
 import * as d3 from 'd3';
 import { ScatterPlotData } from '../../types';
-import { SpinnerProgress } from '../../modals/spinnerProgress';
 
 export const createYearHistogram = (
   data: ScatterPlotData[],
@@ -13,6 +12,9 @@ export const createYearHistogram = (
   const height = 250 - margin.top - margin.bottom;
 
   let binType: 'yearly' | 'monthly' = 'yearly';
+  let brush: any;
+  let xDomain: [Date, Date] = [new Date(minYear, 0, 1), new Date(maxYear, 0, 1)];
+  let currentBrushSelection: [number, number] | null = null;
 
   const svg = d3.select('#visualization-year-filter')
     .append('svg')
@@ -27,7 +29,6 @@ export const createYearHistogram = (
   function updateHistogram() {
     const parseTime = binType === 'yearly' ? d3.timeYear : d3.timeMonth;
     const formatTime = binType === 'yearly' ? d3.timeFormat('%Y') : d3.timeFormat('%Y-%m');
-    const xDomain: [Date, Date] = binType === 'yearly' ? [new Date(minYear, 0, 1), new Date(maxYear, 0, 1)] : [new Date(minYear, 0, 1), new Date(maxYear + 1, 0, 1)];
 
     const histogram = d3.bin<Date, Date>()
       .value((d: Date) => d)
@@ -122,19 +123,24 @@ export const createYearHistogram = (
       .style('font-weight', 'bold')
       .text('Games Released Over Time (Brush to filter)');
 
-    const brush = d3.brushX()
+    brush = d3.brushX()
       .extent([[0, 0], [width, height]])
       .on('brush end', brushed);
 
     svg.select('.brush').remove();
-    svg.append('g')
+    const brushGroup = svg.append('g')
       .attr('class', 'brush')
       .call(brush);
+
+    if (currentBrushSelection) {
+      brushGroup.call(brush.move, currentBrushSelection.map(d => x(new Date(d))));
+    }
 
     function brushed(event: d3.D3BrushEvent<SVGSVGElement>) {
       const selection = event.selection as [number, number];
       if (!selection) {
         updateYearFilter([minYear, maxYear]);
+        currentBrushSelection = null;
         return;
       }
       const [x0, x1] = selection.map(x.invert);
@@ -143,21 +149,69 @@ export const createYearHistogram = (
       const minYearSelected = minDate.getFullYear();
       const maxYearSelected = maxDate.getFullYear();
       updateYearFilter([minYearSelected, maxYearSelected]);
+      currentBrushSelection = [x0.getTime(), x1.getTime()];
     }
   }
 
   // Add bin type toggle button
   d3.select('#bin-toggle').remove();
-  const toggle = d3.select('#visualization-year-filter')
-    .append('button')
-    .classed('btn btn-outline-light position-absolute top-0 start-0', true)
-    .style('margin-left', '100px')
-    .style('margin-top', margin.top + 'px')
+  const toggleContainer = d3.select('#visualization-year-filter')
+    .append('div')
+    .classed('button-container', true)
+    .style('position', 'absolute')
+    .style('top', margin.top + 'px')
+    .style('left', '100px');
+
+  toggleContainer.append('button')
+    .classed('btn btn-outline-light', true)
     .attr('id', 'bin-toggle')
     .text('Switch to Monthly')
     .on('click', () => {
       binType = binType === 'yearly' ? 'monthly' : 'yearly';
-      toggle.text(binType === 'yearly' ? 'Switch to Monthly' : 'Switch to Yearly');
+      d3.select('#bin-toggle').text(binType === 'yearly' ? 'Switch to Monthly' : 'Switch to Yearly');
+      xDomain = [new Date(minYear, 0, 1), new Date(maxYear, 0, 1)];
+      currentBrushSelection = null;
+      updateHistogram();
+      updateYearFilter([minYear, maxYear]);
+    });
+
+  // Add buttons to adjust brush area
+  toggleContainer.append('button')
+    .classed('btn btn-outline-light ms-2', true)
+    .attr('id', 'expand-brush')
+    .text('Expand Brush')
+    .on('click', () => {
+      if (!currentBrushSelection) return;
+
+      const [startTime, endTime] = currentBrushSelection;
+      const start = x(new Date(startTime));
+      const end = x(new Date(endTime));
+      const selectionWidth = end - start;
+
+      const newStart = Math.max(0, start - selectionWidth / 2);
+      const newEnd = Math.min(width, end + selectionWidth / 2);
+
+      // Update x domain to expand around the current brush selection
+      const [x0, x1] = [newStart, newEnd].map(x.invert);
+      xDomain = [new Date(x0), new Date(x1)];
+
+      // Update x axis domain
+      x.domain(xDomain).nice();
+      updateHistogram();
+
+      // Move brush to new positions based on the updated x domain
+      const updatedBrushSelection = [new Date(startTime), new Date(endTime)].map(x);
+      svg.select('.brush').call(brush.move, updatedBrushSelection);
+    });
+
+  toggleContainer.append('button')
+    .classed('btn btn-outline-light ms-2', true)
+    .attr('id', 'reset-brush')
+    .text('Reset Brush')
+    .on('click', () => {
+      svg.select('.brush').call(brush.move, null);
+      xDomain = [new Date(minYear, 0, 1), new Date(maxYear, 0, 1)];
+      currentBrushSelection = null;
       updateHistogram();
       updateYearFilter([minYear, maxYear]);
     });

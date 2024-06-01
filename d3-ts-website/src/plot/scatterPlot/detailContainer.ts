@@ -20,7 +20,7 @@ export const createDetailContainer = async (d: ScatterPlotData, dataLoader: Stea
           </div>
         </div>
         <div class="row mb-2">
-          <div class="col-12">
+          <div class="col-12 text-center">
             <a class="link-light" href="https://store.steampowered.com/app/${d.game_id}" target="_blank" rel="noopener noreferrer">View on Steam</a>
           </div>
         </div>
