@@ -13,6 +13,12 @@ export class SpinnerProgress {
   static hideSpinner = () => {
     const spinner = document.getElementById('spinner') as HTMLElement;
     spinner.style.display = 'none';
+
+    const categoriesSpinner = document.getElementById('spinner-categories') as HTMLElement;
+    categoriesSpinner.style.display = 'none';
+
+    const genresSpinner = document.getElementById('spinner-genres') as HTMLElement;
+    genresSpinner.style.display = 'none';
   };
 
   static hideLoadingContainer = () => {
@@ -29,5 +35,11 @@ export class SpinnerProgress {
 
     const visualizationContainer2 = document.getElementById('visualization-container-2') as HTMLElement;
     visualizationContainer2.classList.add('visible');
+
+    const categoriesFilter = document.getElementById('categories-filter') as HTMLElement;
+    categoriesFilter.classList.add('visible');
+
+    const genresFilter = document.getElementById('genres-filter') as HTMLElement;
+    genresFilter.classList.add('visible');
   };
 }

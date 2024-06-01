@@ -58,36 +58,37 @@ export const createDetailContainer = async (d: ScatterPlotData, dataLoader: Stea
 
       // Append the remaining details once loaded
       detailsContainer.innerHTML += `
-  <div class="container-fluid px-5">
-    <div class="row">
-      <div class="col-12 col-xl-6 text-start">
-        <p><strong>Developers:</strong> ${gameDetails.developers.join(', ')}</p>
-        <p><strong>Publishers:</strong> ${gameDetails.publishers.join(', ')}</p>
-        <p><strong>Genres:</strong> ${gameDetails.genres.join(', ')}</p></div>
-      <div class="col-12 col-xl-6 text-start">
-        <p><strong>Supported Platforms:</strong> ${gameDetails.windows ? 'Windows' : ''} ${gameDetails.mac ? 'Mac' : ''} ${gameDetails.linux ? 'Linux' : ''}</p>
-        <p><strong>Categories:</strong> ${gameDetails.categories.join(', ')}</p>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-12 text-start">
-        <p><strong>Supported Languages:</strong> ${gameDetails.supported_languages.join(', ')}</p>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-12 col-xl-6 d-flex justify-content-center mb-5" id="reviews-plot-container"></div>
-      <div class="col-12 col-xl-6 d-flex justify-content-center mb-5" id="tags-plot-container"></div>
-    </div>
-    <div id="recommendation-loading-container" class="row">
-      <div class="col-12 d-flex justify-content-center mb-5">
-        <div id="spinner" class="spinner-border text-primary" role="status"></div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-12 col-xl-6 d-flex justify-content-center mb-5" id="recommendations-plot-container"></div>
-      <div class="col-12 col-xl-6 d-flex justify-content-center mb-5" id="recommendations-plot-container-2"></div>
+<div class="container-fluid px-5">
+  <div class="row">
+    <div class="col-12 col-xl-6 text-start">
+      <p><strong>Developers:</strong> ${gameDetails.developers.join(', ')}</p>
+      <p><strong>Publishers:</strong> ${gameDetails.publishers.join(', ')}</p>
+      <p><strong>Genres:</strong> ${gameDetails.genres.join(', ')}</p></div>
+    <div class="col-12 col-xl-6 text-start">
+      <p><strong>Supported Platforms:</strong> ${gameDetails.windows ? 'Windows' : ''} ${gameDetails.mac ? 'Mac' : ''} ${gameDetails.linux ? 'Linux' : ''}</p>
+      <p><strong>Categories:</strong> ${gameDetails.categories.join(', ')}</p>
     </div>
   </div>
+  <div class="row">
+    <div class="col-12 text-start">
+      <p><strong>Supported Languages:</strong> ${gameDetails.supported_languages.join(', ')}</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 col-xl-6 d-flex justify-content-center mb-5" id="reviews-plot-container"></div>
+    <div class="col-12 col-xl-6 d-flex justify-content-center mb-5" id="tags-plot-container"></div>
+  </div>
+  <div id="recommendation-loading-container" class="row">
+    <div class="col-12 d-flex flex-column justify-content-center">
+      <div id="spinner" class="spinner-border text-primary" role="status"></div>
+      <span class="text-center">Loading recommendations...</span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 col-xl-6 d-flex justify-content-center mb-5" id="recommendations-plot-container"></div>
+    <div class="col-12 col-xl-6 d-flex justify-content-center mb-5" id="recommendations-plot-container-2"></div>
+  </div>
+</div>
 `;
 
 

@@ -97,7 +97,7 @@ export const createYearHistogram = (
       .attr('y', height + margin.bottom - 10)
       .style('text-anchor', 'middle')
       .style('fill', 'white')
-      .text(binType === 'yearly' ? 'Year (Brush to filter)' : 'Month (Brush to filter)');
+      .text(binType === 'yearly' ? 'Year' : 'Month');
 
     // Y label
     svg.select('.y-label').remove();
@@ -120,7 +120,7 @@ export const createYearHistogram = (
       .style('fill', 'white')
       .style('font-size', '16px')
       .style('font-weight', 'bold')
-      .text('Games Released Over Time');
+      .text('Games Released Over Time (Brush to filter)');
 
     const brush = d3.brushX()
       .extent([[0, 0], [width, height]])
