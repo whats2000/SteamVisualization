@@ -39,7 +39,7 @@ Website: [GitPage](https://whats2000.github.io/SteamVisualization/)
    conda activate steam-visualization
    ```
 
-3. Navigate to the project root directory and install the required Python packages:
+3. Install the dependencies using pip:
    ```bash
    pip install -r requirements.txt
    ```
@@ -51,17 +51,19 @@ Website: [GitPage](https://whats2000.github.io/SteamVisualization/)
 
 ### Frontend Setup
 
-1. Navigate to the `d3-ts-website` directory:
+1. Open another terminal window of the project directory.
+
+2. Navigate to the `d3-ts-website` directory:
    ```bash
    cd d3-ts-website
    ```
 
-2. Install the dependencies using Yarn:
+3. Install the dependencies using Yarn:
    ```bash
    yarn
    ```
 
-3. Start the front-end development server:
+4. Start the front-end development server:
    ```bash
    yarn start
    ```
