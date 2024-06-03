@@ -1,4 +1,6 @@
-# Steam Visualization Project
+# GameVis
+
+## A Steam Game Data Visualization Project
 
 This project visualizes Steam game data using a combination of front-end and back-end technologies. 
 
@@ -24,6 +26,29 @@ Website: [GitPage](https://whats2000.github.io/SteamVisualization/)
    cd SteamVisualization
    ```
 
+### Backend Setup
+
+1. Create a Conda environment with Python 3.11:
+   ```bash
+   conda create -n steam-visualization python=3.11
+   ```
+
+2. Activate the Conda environment:
+   ```bash
+   conda init bash
+   conda activate steam-visualization
+   ```
+
+3. Navigate to the project root directory and install the required Python packages:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Run the backend server:
+   ```bash
+   python run.py
+   ```
+
 ### Frontend Setup
 
 1. Navigate to the `d3-ts-website` directory:
@@ -39,28 +64,6 @@ Website: [GitPage](https://whats2000.github.io/SteamVisualization/)
 3. Start the front-end development server:
    ```bash
    yarn start
-   ```
-
-### Backend Setup
-
-1. Create a Conda environment with Python 3.11:
-   ```bash
-   conda create -n steam-visualization python=3.11
-   ```
-
-2. Activate the Conda environment:
-   ```bash
-   conda activate steam-visualization
-   ```
-
-3. Navigate to the project root directory and install the required Python packages:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. Run the backend server:
-   ```bash
-   python run.py
    ```
 
 ## Project Structure
