@@ -2,6 +2,9 @@
 
 This project visualizes Steam game data using a combination of front-end and back-end technologies. 
 
+## Demo (Without Backend)
+Website: [GitPage](https://whats2000.github.io/SteamVisualization/)
+
 ## Prerequisites
 
 - **Node.js**: Make sure you have Node.js installed. You can download it from [Node.js](https://nodejs.org/).
