@@ -94,6 +94,7 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
       });
 
     updateZoomCircles(d3.selectAll('#zoom-container circle') as any);
+    updateZoomPlot();
   }
 
   const updateZoomCircles = (zoomedCircles: d3.Selection<SVGCircleElement, ScatterPlotData, SVGGElement, unknown>) => {
