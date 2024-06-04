@@ -45,7 +45,8 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
   const updateZoomPlot = () => {
     createZoomPlot(
       filteredData, activeLegend, currentBrushExtent, currentScaleType as 'linear' | 'symlog', x, y, colorScale,
-      ownerRanges, dataLoader, width, height, selectedPoint, margin, updateZoomCircles, hasShownAlert, updateHasShownAlert,
+      ownerRanges, dataLoader, width, height, selectedPoint, margin, updateZoomCircles, hasShownAlert, updateSelectedPoint,
+      updateHasShownAlert,
     );
   }
 
@@ -216,6 +217,10 @@ export const createScatterPlot = (dataLoader: SteamDataLoader) => {
     applyFilters();
     updateCategoriesGenresBarPlot();
   };
+
+  const updateSelectedPoint = (point: ScatterPlotData | null) => {
+    selectedPoint = point;
+  }
 
   const updateScatterPlotZoomPlot = () => {
     circlesGroup.selectAll('circle').remove();

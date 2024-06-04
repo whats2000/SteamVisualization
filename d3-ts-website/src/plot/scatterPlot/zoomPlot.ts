@@ -18,6 +18,7 @@ export const createZoomPlot = (
   margin: { top: number; right: number; bottom: number; left: number },
   updateZoomCircles: (zoomedCircles: d3.Selection<SVGCircleElement, ScatterPlotData, SVGGElement, unknown>) => void,
   hasShownAlert: boolean,
+  updateSelectedPoint: (value: ScatterPlotData | null) => void,
   updateHasShownAlert: (value: boolean) => void,
 ) => {
   const [[x0, y0], [x1, y1]] = currentBrushExtent;
@@ -130,6 +131,7 @@ export const createZoomPlot = (
           .style('opacity', 0.5);
       }
       selectedPoint = d;
+      updateSelectedPoint(d);
       (d3.selectAll('#zoom-container circle') as unknown as d3.Selection<SVGCircleElement, ScatterPlotData, SVGGElement, unknown>)
         .attr('r', 5)
         .style('opacity', d => (activeLegend && d.estimated_owners !== activeLegend) ? 0.01 : 0.5)
