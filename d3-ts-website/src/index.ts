@@ -78,3 +78,10 @@ const init = async () => {
 document.addEventListener('DOMContentLoaded', () => {
   init().catch(console.error);
 });
+
+// Prevent reloading the page when searching for a game
+(document.getElementById('search-game') as HTMLInputElement).addEventListener('keypress', (event) => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+  }
+});
