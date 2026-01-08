@@ -29,3 +29,6 @@ games.json
 cache-images
 
 data_server/__pycache__
+
+raw_data/
+backup_chunks/

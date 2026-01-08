@@ -88,8 +88,10 @@ SteamVisualization
 │   ├── __init__.py
 │   ├── models.py
 │   ├── routes.py
+├── raw_data
+│   ├── games_march2025_cleaned.csv
 ├── script
-│   ├── split_json_file.py
+│   ├── analyze_and_merge_data.py
 ├── .gitattributes
 ├── .gitignore
 ├── .prettierignore
@@ -107,11 +109,30 @@ Once both the frontend and backend servers are running, open your browser and na
 
 ## Dataset Reference
 
-This project uses the [Steam Games Dataset](https://www.kaggle.com/datasets/fronkongames/steam-games-dataset) from Kaggle.
+This project uses Steam game data from multiple sources, merged into a comprehensive dataset:
+
+### Current Data Source (March 2025)
+- **Primary Source**: [Steam Games Dataset by artermiloff](https://www.kaggle.com/datasets/artermiloff/steam-games-dataset)
+- **Last Updated**: March 2025
+- **Total Games**: ~107,866 games
+- **Data Split**: 20 JSON chunks for progressive loading
+
+### Previous Data Source
+- **Original Source**: [Steam Games Dataset by FronKongames](https://www.kaggle.com/datasets/fronkongames/steam-games-dataset)
+- Historical data merged with current source to preserve older game information
 
 ### About the Dataset
 
-This dataset has been created with this code (MIT) and uses the API provided by Steam, the largest gaming platform on PC. Data is also collected from Steam Spy.
+These datasets are created using the Steam API and SteamSpy API. The data includes game metadata, statistics, pricing, player counts, reviews, and more.
+
+### Updating the Dataset
+
+To merge new data:
+1. Place the new CSV file in `raw_data/` directory
+2. Run analysis: `python script/analyze_and_merge_data.py`
+3. Run merge: `python script/analyze_and_merge_data.py --merge`
+
+The merge process preserves all existing game data and updates with new information where available.
 
 ## License
 

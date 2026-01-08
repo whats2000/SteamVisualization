@@ -3,12 +3,12 @@ import { SpinnerProgress } from './spinnerProgress';
 
 export class SteamDataFromJson implements SteamDataLoader {
   private loadedChunks = 0;
-  private totalChunks = 9;
+  private totalChunks = 20;
   private readonly maxChunks: number;
   private loadedScatterPlotData: ScatterPlotData[] = [];
   private loadedGameData: GameDataDictionary = {};
 
-  constructor(maxChunks: number = 9) {
+  constructor(maxChunks: number = 20) {
     this.maxChunks = maxChunks;
   };
 
