@@ -57,6 +57,7 @@ module.exports = (env, argv) => ({
     new CopyWebpackPlugin({
       patterns: [
         { from: 'src/data', to: 'data' },
+        { from: 'src/assets', to: 'assets' },
       ],
     }),
     new MiniCssExtractPlugin({
